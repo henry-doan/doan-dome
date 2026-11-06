@@ -1,0 +1,31 @@
+{
+  "name": "doan-dome",
+  "private": true,
+  "version": "0.1.0",
+  "description": "An observatory-themed slideshow app for designing and presenting, built with React 19.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@eslint/js": "^10.0.1",
+    "@rolldown/plugin-babel": "^0.2.4",
+    "@vitejs/plugin-react": "^6.1.2",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
+    "vite": "^8.3.4"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}
