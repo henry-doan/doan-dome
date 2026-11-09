@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useLibrary } from '../hooks/useLibrary.js'
 import AppHeader from './AppHeader.jsx'
+import StarBook from './StarBook.jsx'
 import StarDial from './StarDial.jsx'
 
 const countsFor = (decks) => {
@@ -35,6 +36,7 @@ const AppShell = ({ currentPath, children }) => {
         {children(query.trim().toLowerCase())}
       </main>
       <StarDial currentPath={currentPath} counts={countsFor(decks)} />
+      <StarBook />
     </div>
   )
 }

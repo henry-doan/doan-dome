@@ -11,6 +11,7 @@ import { createDeck, importDeck, setShowIntro } from '../lib/deckStore.js'
 import { navigate } from '../lib/router.js'
 
 const OPEN_MS = 1900
+const LAUNCH_MS = 1300
 const ARRIVE_MS = 900
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -27,20 +28,42 @@ const DomeIntro = () => {
   const { settings } = useLibrary()
   const [isOpen, setIsOpen] = useState(false)
   const [isReady, setIsReady] = useState(false)
+  // Heading to the sky: 'launching' tilts up into the stars, 'arriving' fades out.
+  const [skyFlight, setSkyFlight] = useState(null)
   const fileInput = useRef(null)
   const firstChoice = useRef(null)
 
   const [result, launch, isPending] = useActionState(async (_previous, request) => {
     try {
       const work = request.type === 'file' ? readDeckFile(request.file).then(importDeck) : Promise.resolve(createDeck())
-      const [id] = await Promise.all([work, wait(reducedMotion() ? 150 : 1300)])
+      const [id] = await Promise.all([work, wait(reducedMotion() ? 150 : LAUNCH_MS)])
       return { id, error: null }
     } catch (error) {
       return { id: null, error: error.message }
     }
   }, { id: null, error: null })
 
-  const isLaunching = isPending || Boolean(result.id)
+  const isLaunching = isPending || Boolean(result.id) || Boolean(skyFlight)
+  const isArriving = Boolean(result.id) || skyFlight === 'arriving'
+
+  /** The same tilt into the stars as starting a presentation, then the sky. */
+  const flyToSky = () => {
+    if (isLaunching) return
+    if (reducedMotion()) {
+      navigate('/home')
+      return
+    }
+    setSkyFlight('launching')
+  }
+
+  useEffect(() => {
+    if (!skyFlight) return
+    const timer =
+      skyFlight === 'launching'
+        ? setTimeout(() => setSkyFlight('arriving'), LAUNCH_MS)
+        : setTimeout(() => navigate('/home'), ARRIVE_MS)
+    return () => clearTimeout(timer)
+  }, [skyFlight])
 
   useEffect(() => {
     if (!isOpen) return
@@ -61,7 +84,7 @@ const DomeIntro = () => {
   const phase = isLaunching ? 'is-launching' : isOpen ? 'is-open' : 'is-closed'
 
   return (
-    <main className={`dome-intro ${phase} ${result.id ? 'is-arriving' : ''}`}>
+    <main className={`dome-intro ${phase} ${isArriving ? 'is-arriving' : ''}`}>
       <title>Doan Dome</title>
 
       <div className="dome-scene" aria-hidden="true">
@@ -72,7 +95,7 @@ const DomeIntro = () => {
         <img className="dome-art" src={domeOpen} alt="" draggable="false" />
       </div>
 
-      <button type="button" className="intro-skip" onClick={() => navigate('/home')}>
+      <button type="button" className="intro-skip" onClick={flyToSky}>
         Skip to your sky
         <Icon name="chevronRight" size={16} />
       </button>
@@ -117,7 +140,7 @@ const DomeIntro = () => {
                 {result.error}
               </p>
             )}
-            <button type="button" className="text-link dome-library" onClick={() => navigate('/home')}>
+            <button type="button" className="text-link dome-library" onClick={flyToSky}>
               Go to your sky
             </button>
           </div>

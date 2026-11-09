@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Design and present slideshows under the stars." />
-    <meta name="theme-color" content="#03132f" />
+    <meta name="theme-color" content="#190134" />
     <meta property="og:title" content="Doan Dome" />
     <meta property="og:image" content="/logo.png" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
@@ -13,20 +13,13 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- crossorigin lets PDF and PowerPoint export read these fonts to embed them in slide pictures. -->
     <link
       rel="stylesheet"
+      crossorigin="anonymous"
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Sans+3:wght@400;600;700&display=swap"
     />
     <title>Doan Dome</title>
-    <!-- Apply the saved app theme before the first paint so there is no flash. -->
-    <script>
-      (() => {
-        try {
-          const theme = localStorage.getItem('doan-dome-theme')
-          if (['midnight', 'parchment', 'nebula'].includes(theme)) document.documentElement.dataset.theme = theme
-        } catch {}
-      })()
-    </script>
   </head>
   <body>
     <div id="root"></div>

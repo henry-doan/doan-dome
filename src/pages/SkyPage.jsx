@@ -3,7 +3,9 @@ import ConstellationSky from '../components/ConstellationSky.jsx'
 import DeckList from '../components/DeckList.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import Icon from '../components/Icon.jsx'
-import Moon from '../components/Moon.jsx'
+import SkyChart from '../components/SkyChart.jsx'
+import UfoLayer from '../components/ufo/UfoLayer.jsx'
+import { BookConstellation } from '../components/StarBook.jsx'
 import Starfield from '../components/Starfield.jsx'
 import { useDismiss } from '../hooks/useDismiss.js'
 import { useLibrary } from '../hooks/useLibrary.js'
@@ -12,6 +14,7 @@ import { greetingFor } from '../lib/dates.js'
 import { createDeck, emptyTrash, setSkyView } from '../lib/deckStore.js'
 import { FOLDERS } from '../lib/folders.js'
 import { navigate } from '../lib/router.js'
+import { openStarBook } from '../lib/starBookStore.js'
 
 const ZOOM_MS = 650
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -95,6 +98,19 @@ const WishCard = ({ wish, canSurprise, onSurprise, onCreate, onClose }) => {
   )
 }
 
+/** The star book easter egg: a faint book constellation that opens the Doan Docs. */
+const BookEgg = ({ className = '' }) => (
+  <button
+    type="button"
+    className={`book-egg ${className}`}
+    aria-label="A book in the stars: open the Doan Docs"
+    title="Some stars tell stories…"
+    onClick={(event) => openStarBook(event.currentTarget.getBoundingClientRect())}
+  >
+    <BookConstellation />
+  </button>
+)
+
 const viewFor = (name, folderId) => {
   if (name !== 'folder') return VIEWS[name]
   const folder = FOLDERS.find((item) => item.id === folderId)
@@ -113,7 +129,14 @@ const SkyPage = ({ view, folderId, query }) => {
   const { pickFile, fileInput, isOpening } = useOpenDeckFile()
   const [zoom, setZoom] = useState(null)
   const [wish, setWish] = useState(null)
+  // Exploring the real sky: the presentations step aside and the chart can be moved.
+  const [explore, setExplore] = useState(false)
+  const [facing, setFacing] = useState('')
+  const [recenter, setRecenter] = useState(0)
+  // A short notice when a meteor shower starts while exploring.
+  const [shower, setShower] = useState(0)
   const skyRef = useRef(null)
+  const chartRef = useRef(null)
   const config = viewFor(view, folderId)
 
   // While searching, bring the first match into view if it is off screen.
@@ -129,6 +152,33 @@ const SkyPage = ({ view, folderId, query }) => {
     }, 350)
     return () => clearTimeout(timer)
   }, [query])
+
+  // Exploring fills the screen. Searching brings the presentations back.
+  const isExploring = explore && !query
+
+  // The meteor shower notice clears itself once it has faded.
+  useEffect(() => {
+    if (!shower) return
+    const timer = setTimeout(() => setShower(0), 4300)
+    return () => clearTimeout(timer)
+  }, [shower])
+
+  // Esc leaves the night sky. In browser full screen the browser takes the Esc
+  // to leave full screen, so leaving full screen leaves the night sky too.
+  useEffect(() => {
+    if (!isExploring) return
+    const onKey = (event) => event.key === 'Escape' && setExplore(false)
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) setExplore(false)
+    }
+    window.addEventListener('keydown', onKey)
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.removeEventListener('fullscreenchange', onFullscreenChange)
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {})
+    }
+  }, [isExploring])
 
   useEffect(() => {
     if (!zoom) return
@@ -186,6 +236,13 @@ const SkyPage = ({ view, folderId, query }) => {
 
   const liveCount = decks.filter((deck) => !deck.trashedAt).length
 
+  const toggleExplore = () => {
+    // Full screen has to be asked for during the click. Where it isn't
+    // available, the sky still fills the browser window.
+    if (!isExploring) skyRef.current?.requestFullscreen?.().catch(() => {})
+    setExplore(!isExploring)
+  }
+
   return (
     <div className={`sky-page ${showSky ? 'is-sky' : 'is-list'}`}>
       <title>{`${config.title ?? 'Your sky'} – Doan Dome`}</title>
@@ -237,20 +294,67 @@ const SkyPage = ({ view, folderId, query }) => {
       ) : showSky ? (
         <div
           ref={skyRef}
-          className={`sky-panel ${zoom ? 'is-zooming' : ''} ${query ? 'is-searching' : ''}`}
+          className={`sky-panel ${zoom ? 'is-zooming' : ''} ${query ? 'is-searching' : ''} ${isExploring ? 'is-exploring' : ''}`}
           style={zoom ? { '--zoom-x': `${zoom.x}px`, '--zoom-y': `${zoom.y}px` } : undefined}
         >
-          <Starfield
-            seed={`sky-${view}`}
-            density={0.00022}
-            shootingMin={10}
-            shootingMax={20}
-            drift={3}
-            streakSlowdown={1.6}
-            onCatch={catchStar}
-          />
-          <Moon />
-          <div className="sky-content">
+          {isExploring && (
+            <Starfield
+              seed="explore"
+              className="explore-starfield"
+              density={0.00026}
+              shootingMin={9}
+              shootingMax={18}
+              showers
+              showerMin={50}
+              showerMax={90}
+              onShower={() => setShower(Date.now())}
+            />
+          )}
+          <SkyChart exploring={isExploring} recenter={recenter} onFacing={setFacing} controllerRef={chartRef} />
+          {/* A fresh sky (and timer) when switching between the Sky view and exploring. */}
+          {!zoom && <UfoLayer key={isExploring ? 'explore' : 'sky'} mode={isExploring ? 'explore' : 'sky'} panelRef={skyRef} chartRef={chartRef} />}
+          {isExploring && shower > 0 && (
+            <p key={shower} className="meteor-notice" role="status">
+              <Icon name="sparkle" size={14} />
+              Meteor shower
+            </p>
+          )}
+          {/* Stops while exploring, which has its own starfield, so only one sky animates. */}
+          {!isExploring && (
+            <Starfield
+              seed={`sky-${view}`}
+              density={0.00022}
+              shootingMin={10}
+              shootingMax={20}
+              drift={3}
+              streakSlowdown={1.6}
+              onCatch={catchStar}
+            />
+          )}
+          <div className="sky-explore-bar">
+            {isExploring && (
+              <button type="button" className="sky-explore-button" onClick={() => setRecenter((count) => count + 1)} title="Back to tonight’s sky overhead">
+                <Icon name="compass" size={16} />
+                <span className="hide-small">Tonight</span>
+              </button>
+            )}
+            <button type="button" className="sky-explore-button" aria-pressed={isExploring} title={isExploring ? 'Exit (Esc)' : undefined} onClick={toggleExplore}>
+              <Icon name={isExploring ? 'sky' : 'telescope'} size={16} />
+              {isExploring ? 'Back to my presentations' : 'Explore the night sky'}
+            </button>
+          </div>
+          {isExploring && (
+            <p className="sky-explore-hint" aria-live="polite">
+              {facing && (
+                <>
+                  Facing <strong>{facing}</strong> ·{' '}
+                </>
+              )}
+              <span className="hint-fine">Drag or scroll to look around · Ctrl + scroll to zoom · Esc to exit</span>
+              <span className="hint-touch">Drag to look around</span>
+            </p>
+          )}
+          <div className="sky-content" inert={isExploring}>
             {query && listed.length === 0 && <p className="sky-note">No constellations match “{query}”.</p>}
             <ConstellationSky
               decks={inView}
@@ -259,6 +363,7 @@ const SkyPage = ({ view, folderId, query }) => {
               onOpen={(deck, rect) => zoomInto(deck.id, rect)}
               onCreate={view === 'home' || view === 'folder' ? create : undefined}
             />
+            <BookEgg className="in-sky" />
           </div>
           {wish && (
             <WishCard
@@ -271,7 +376,12 @@ const SkyPage = ({ view, folderId, query }) => {
           )}
         </div>
       ) : listed.length > 0 ? (
-        <DeckList decks={listed} isTrash={isTrash} showFolderFilter={view !== 'folder'} label={config.title ?? 'Presentations'} />
+        <>
+          <DeckList decks={listed} isTrash={isTrash} showFolderFilter={view !== 'folder'} label={config.title ?? 'Presentations'} />
+          {!isTrash && (
+            <BookEgg />
+          )}
+        </>
       ) : (
         <EmptyState title="No matching presentations" message={`Nothing matches “${query}”.`} />
       )}

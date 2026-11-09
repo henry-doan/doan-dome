@@ -57,16 +57,32 @@ Text and shapes that don’t set their own color or font follow the theme, so sw
 **Presenting**
 - **Present** goes full screen from the first slide; the arrow beside it starts from the current slide.
 - The first slide opens like the dome’s shutter, from a slit of light; later slides crossfade.
-- Next: → Space Enter Page Down or click. Back: ← Backspace Page Up. Home and End. Type a number and Enter to jump. B for a black screen. Esc ends the show.
+- Next: → Space Enter Page Down or click. Back: ← Backspace Page Up. Home and End. Type a number and Enter to jump. B for a black screen. T for the telescope spotlight: the room goes dark except a gold eyepiece that follows the pointer (scroll or [ ] to resize). Esc ends the show.
 - A small control bar appears when you move the mouse and hides when you stop.
 
-**App themes**
+**The real night sky**
 
-The switch in the header picks **Midnight** (indigo, silver and gold), **Parchment** (an antique star atlas), **Nebula** (violet, pink and teal) or **Match system** (Midnight or Parchment from your device’s dark or light setting). The header keeps the logo’s deep midnight in every theme.
+**Explore the night sky** (top right of the Sky view) goes full screen and shows the real sky: all 88 constellations and every star down to magnitude 5, starting from roughly what's overhead where you are right now, with famous patterns like the Big Dipper picked out in brighter gold, over twinkling stars, shooting stars and the occasional meteor shower. Drag, scroll or use the arrow keys to look around, with Ctrl + scroll or + and − to zoom. The hint names the constellation you're facing, **Tonight** brings you back overhead, and Esc exits full screen back to your presentations.
+
+**UFOs**
+
+Now and then a UFO crosses the Sky view or the night sky explore view. There are three kinds, and clicking one sets off something different:
+
+- **Flying saucer**: it hovers and beams up one of your presentations (or a real constellation), studies it and gives it back, then an agent in a black suit wipes your memory with a red beam and a white flash.
+- **Tic tac**: it hangs still and jumps around, and dodges the pointer. Catch it and an infrared targeting camera locks on before it speeds away.
+- **Space freighter**: a jump to lightspeed from its cockpit. While exploring, you drop out somewhere else in the sky.
+
+The account menu can replay each one (**UFO abduction**, **Tic tac sighting**, **Jump to lightspeed**), switching to the Sky view if needed. Every UFO caught in the wild counts toward the sightings log in the menu, repeats included, along with how many of the 3 kinds you've found; menu replays don't count. UFOs don't appear with reduced motion turned on. While developing, `ufo('saucer')`, `ufo('tictac')` or `ufo('freighter')` in the browser console summons one.
+
+**App look**
+
+The whole app uses one look, **Nebula**: deep violet with the logo’s gold. The header shows tonight’s real moon phase with a line about the night. The logo and dome artwork were recolored from navy to violet so they match.
 
 **Files**
 
-Presentations can be saved as and opened from **Doan Dome files (.dome)**, which hold everything including images. Use them for backups or to move a presentation between browsers. PowerPoint (.pptx) and PDF are pass 4.
+Presentations can be saved as and opened from **Doan Dome files (.dome)**, which hold everything including images. Use them for backups or to move a presentation between browsers.
+
+**Download PowerPoint (.pptx) or PDF** from the editor’s download menu or a presentation’s ⋯ menu. PowerPoint files keep text, shapes, images and speaker notes editable, with the theme’s artwork as each slide’s background picture. PDFs have one page per slide, drawn exactly as in Doan Dome. Opening PowerPoint and PDF files is still to come.
 
 ## Getting started
 
@@ -105,7 +121,7 @@ The artwork is yours, in `docs/`. The app uses prepared copies:
 | `public/icon-*.png`, `apple-touch-icon.png`, `favicon.ico` | The observatory on the logo’s navy | Browser tab, phone home screen, installed app |
 | `public/logo.png` | `DoanDome.png`, smaller | README and sharing previews |
 
-The logo’s background is a flat deep midnight (#03132F), so rather than cutting it out, the app’s header uses that exact color and the logo sits on it seamlessly.
+The logo’s background is a flat deep violet (#190134), so rather than cutting it out, the app’s header uses that exact color and the logo sits on it seamlessly.
 
 The two dome pictures line up exactly, which is what makes the shutter animation possible: the open picture is the top layer with a hole where the sky is, the shutter strip sits behind it and slides up, and the starfield is behind both. If you replace either picture, keep the same size and framing, then regenerate the three dome files.
 
@@ -114,7 +130,7 @@ The two dome pictures line up exactly, which is what makes the shutter animation
 ```
 src/
 ├── main.jsx, App.jsx          Entry point and routing
-├── styles.css                 App themes and every style
+├── styles.css                 The Nebula look and every style
 ├── pages/
 │   ├── DomeIntro.jsx          The observatory start screen
 │   ├── SkyPage.jsx            Sky and List views for every library page
@@ -132,18 +148,20 @@ src/
 │   ├── ConstellationSky.jsx   Presentations as constellations
 │   ├── Starfield.jsx          Twinkling canvas sky with shooting stars
 │   ├── DeckList.jsx, DeckActions.jsx   The List view and ⋯ menu
-│   ├── AppShell.jsx, AppHeader.jsx, Sidebar.jsx, ThemePicker.jsx, Logo.jsx
+│   ├── AppShell.jsx, AppHeader.jsx, Sidebar.jsx, Logo.jsx
 │   └── Menu.jsx, Dialog.jsx, Toast.jsx, EmptyState.jsx, Icon.jsx
-├── hooks/                     useLibrary, useRoute, useTheme, useOpenDeckFile, useDismiss
+├── hooks/                     useLibrary, useRoute, useOpenDeckFile, useDismiss
 └── lib/
     ├── deckStore.js           Presentations, profile and settings
     ├── slideThemes.js         Slide themes and fonts
     ├── layouts.js             Slide layouts and sizes
     ├── shapes.js              Shape outlines
     ├── constellations.js      Star positions and brightness
+    ├── skyChart.json          The real sky: constellation figures, names and stars (d3-celestial)
     ├── deckFile.js            .dome files
+    ├── exportDeck.jsx         PowerPoint and PDF export (loaded on first use)
     ├── storage.js             IndexedDB
-    └── router.js, themeStore.js, random.js, dates.js, folders.js, toastStore.js
+    └── router.js, random.js, dates.js, folders.js, toastStore.js
 ```
 
 ## How it works
@@ -169,7 +187,7 @@ src/
 | React Compiler | Whole app |
 | `useActionState` + transitions | Dome intro, opening .dome files |
 | `useEffectEvent` | Presenting keys, pasting images, autosave on leave |
-| `useSyncExternalStore` | Library, router, toasts, app theme |
+| `useSyncExternalStore` | Library, router, toasts |
 | `useReducer` | Editor history |
 | `<title>` in components | Every page sets the tab title |
 | `inert` | Hides the dome’s choices until the shutter is open |
@@ -183,10 +201,10 @@ Keyboard access throughout (including Tab and Enter for constellations and every
 1. **Foundation (this release):** dome, sky, branding, editor for text, shapes and images, themes, presenting.
 2. **Rich content:** tables, charts, lines and video; templates for everyday use; presenter view with notes, timer and next slide.
 3. **Motion:** transitions including morph, and per-item animations (fly in, fade, grow, spin, exit) in an order you set.
-4. **Files:** PowerPoint (.pptx) open and save, PDF save.
+4. **Files:** open PowerPoint (.pptx) files. (Saving as PowerPoint and PDF is done.)
 
 Also planned: per-word formatting inside text boxes, and your remaining artwork (zodiac ornaments, slide backgrounds) as it arrives.
 
 ## Licensing
 
-React and Vite are MIT. Fonts are under the SIL Open Font License. The artwork in `docs/` and `src/assets/` is yours. Choose a license for your own code.
+React and Vite are MIT. Fonts are under the SIL Open Font License. pptxgenjs and html-to-image are MIT; jsPDF is MIT. The star chart in `src/lib/skyChart.json` comes from [d3-celestial](https://github.com/ofrohn/d3-celestial), Copyright (c) 2015, Olaf Frohn, under the BSD 3-Clause license. The artwork in `docs/` and `src/assets/` is yours. Choose a license for your own code.

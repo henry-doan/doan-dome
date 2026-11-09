@@ -1,12 +1,14 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useSyncExternalStore } from 'react'
 import { useLibrary } from '../hooks/useLibrary.js'
-import { resetLibrary, setProfileName, setShowIntro } from '../lib/deckStore.js'
-import { navigate } from '../lib/router.js'
+import { resetLibrary, setProfileName, setShowIntro, setSkyView } from '../lib/deckStore.js'
+import { getPath, navigate } from '../lib/router.js'
+import { openStarBook } from '../lib/starBookStore.js'
+import { getSightings, requestUfo, subscribeToSightings, UFO_KINDS } from '../lib/ufoStore.js'
 import Dialog from './Dialog.jsx'
 import Icon from './Icon.jsx'
 import Logo from './Logo.jsx'
 import Menu from './Menu.jsx'
-import ThemePicker from './ThemePicker.jsx'
+import Moon from './Moon.jsx'
 
 const initialsOf = (name) =>
   name
@@ -39,8 +41,20 @@ const NameForm = ({ name, onDone }) => {
   )
 }
 
+/**
+ * Plays a UFO animation from the menu. UFOs live in the Sky view, so this
+ * switches there first (from the List view or Trash). Replays don't count
+ * toward the sightings log.
+ */
+const replayUfo = (kind) => {
+  setSkyView('sky')
+  if (getPath().startsWith('/trash')) navigate('/home')
+  requestUfo(kind)
+}
+
 const ProfileMenu = () => {
   const { profile, settings } = useLibrary()
+  const sightings = useSyncExternalStore(subscribeToSightings, getSightings)
   const [dialog, setDialog] = useState(null)
   const close = () => setDialog(null)
 
@@ -74,6 +88,28 @@ const ProfileMenu = () => {
             onSelect: () => setShowIntro(!settings.showIntro),
           },
           { label: 'Replay the dome intro', icon: <Icon name="refresh" size={18} />, onSelect: () => navigate('/intro') },
+          { label: 'UFO abduction', icon: <Icon name="saucer" size={18} />, onSelect: () => replayUfo('saucer') },
+          { label: 'Tic tac sighting', icon: <Icon name="capsule" size={18} />, onSelect: () => replayUfo('tictac') },
+          { label: 'Jump to lightspeed', icon: <Icon name="warp" size={18} />, onSelect: () => replayUfo('freighter') },
+          { label: 'Read the star book', icon: <Icon name="book" size={18} />, onSelect: () => openStarBook() },
+          // The UFO sightings log appears once the first UFO has been caught.
+          ...(sightings.total
+            ? [
+                {
+                  type: 'custom',
+                  key: 'ufo',
+                  content: (
+                    <p className="menu-sightings">
+                      <Icon name="sparkle" size={14} />
+                      UFO sightings: {sightings.total}
+                      <span className="menu-sightings-kinds">
+                        {sightings.kinds} of {UFO_KINDS.length} kinds
+                      </span>
+                    </p>
+                  ),
+                },
+              ]
+            : []),
           { type: 'divider', key: 'd2' },
           { label: 'Reset sample sky', icon: <Icon name="restore" size={18} />, danger: true, onSelect: () => setDialog('reset') },
         ]}
@@ -143,12 +179,12 @@ const EyepieceSearch = ({ query, onQueryChange }) => {
   )
 }
 
-/** See-through bar over the page: eyepiece search, then theme, account and the logo at the top right. */
+/** See-through bar over the page: eyepiece search, then tonight's moon, account and the logo at the top right. */
 const AppHeader = ({ query, onQueryChange }) => (
   <header className="app-header">
     <EyepieceSearch query={query} onQueryChange={onQueryChange} />
     <div className="header-actions">
-      <ThemePicker />
+      <Moon />
       <ProfileMenu />
       <a className="header-logo" href="#/home" aria-label="Doan Dome home">
         <Logo variant="compact" size={40} />

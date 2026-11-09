@@ -4,7 +4,7 @@ import { SLIDE_THEMES } from './slideThemes.js'
 /**
  * Doan Dome files (.dome) are JSON: the presentation with its images
  * inside. They're for backups and for moving a presentation between
- * browsers. PowerPoint and PDF come in a later version.
+ * browsers. PowerPoint and PDF downloads are in exportDeck.jsx.
  */
 
 export const DECK_FILE_ACCEPT = '.dome,application/json'

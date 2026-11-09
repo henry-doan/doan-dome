@@ -6,18 +6,25 @@ import { SLIDE_SIZES } from '../lib/layouts.js'
 import { navigate } from '../lib/router.js'
 
 const IDLE_MS = 2500
+const LENS_MIN = 90
+const LENS_MAX = 420
+const LENS_START = 180
 
 /**
  * The show. The room "dims" and the first slide opens like the dome's
  * shutter; later slides crossfade. Keys: → Space Enter PageDown for next,
  * ← Backspace PageUp for back, Home/End, a number then Enter to jump,
- * B for a black screen, Esc to stop.
+ * B for a black screen, T for the telescope spotlight (scroll or [ ] to
+ * resize it), Esc to stop.
  */
 const Show = ({ deck, startAt }) => {
   const [index, setIndex] = useState(Math.min(startAt, deck.slides.length - 1))
   const [previous, setPrevious] = useState(null)
   const [isBlack, setIsBlack] = useState(false)
   const [isIdle, setIsIdle] = useState(false)
+  const [isSpotlight, setIsSpotlight] = useState(false)
+  const lensRef = useRef(null)
+  const lens = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2, size: LENS_START })
   const [width, setWidth] = useState(window.innerWidth)
   const stageRef = useRef(null)
   const typed = useRef('')
@@ -47,6 +54,19 @@ const Show = ({ deck, startAt }) => {
     setIsBlack(false)
   }
 
+  // The lens moves by writing straight to its style, so following the
+  // pointer never re-renders the slide.
+  const placeLens = () => {
+    const { x, y, size } = lens.current
+    lensRef.current?.style.setProperty('transform', `translate(${x - size / 2}px, ${y - size / 2}px)`)
+    lensRef.current?.style.setProperty('--lens', `${size}px`)
+  }
+
+  const resizeLens = (by) => {
+    lens.current.size = Math.max(LENS_MIN, Math.min(LENS_MAX, lens.current.size + by))
+    placeLens()
+  }
+
   const onKey = useEffectEvent((event) => {
     const key = event.key
     if (/^\d$/.test(key)) {
@@ -69,6 +89,8 @@ const Show = ({ deck, startAt }) => {
     } else if (key === 'Home') goTo(0)
     else if (key === 'End') goTo(deck.slides.length - 1)
     else if (key === 'b' || key === '.') setIsBlack((black) => !black)
+    else if (key === 't' || key === 'l') setIsSpotlight((on) => !on)
+    else if (isSpotlight && (key === '[' || key === ']')) resizeLens(key === ']' ? 30 : -30)
     else if (key === 'Escape') exit()
   })
 
@@ -90,6 +112,10 @@ const Show = ({ deck, startAt }) => {
 
   useEffect(() => () => clearTimeout(idleTimer.current), [])
 
+  useLayoutEffect(() => {
+    if (isSpotlight && !isBlack) placeLens()
+  }, [isSpotlight, isBlack])
+
   const wake = () => {
     setIsIdle(false)
     clearTimeout(idleTimer.current)
@@ -100,8 +126,16 @@ const Show = ({ deck, startAt }) => {
 
   return (
     <main
-      className={`show ${isIdle ? 'is-idle' : ''}`}
-      onPointerMove={wake}
+      className={`show ${isIdle ? 'is-idle' : ''} ${isSpotlight ? 'is-spotlight' : ''}`}
+      onPointerMove={(event) => {
+        wake()
+        lens.current.x = event.clientX
+        lens.current.y = event.clientY
+        if (isSpotlight) placeLens()
+      }}
+      onWheel={(event) => {
+        if (isSpotlight) resizeLens(event.deltaY < 0 ? 20 : -20)
+      }}
       onClick={(event) => {
         if (event.target.closest('.show-controls')) return
         if (isEnd) exit()
@@ -127,6 +161,12 @@ const Show = ({ deck, startAt }) => {
         {isBlack && <div className="show-black" aria-label="Screen blanked" />}
       </div>
 
+      {isSpotlight && !isBlack && (
+        <div ref={lensRef} className="show-lens" aria-hidden="true">
+          <span className="show-lens-ticks" />
+        </div>
+      )}
+
       <div className="show-controls" role="toolbar" aria-label="Presentation controls">
         <button type="button" aria-label="Previous slide" onClick={() => goTo(index - 1)} disabled={index === 0}>
           <Icon name="chevronLeft" size={20} />
@@ -136,6 +176,15 @@ const Show = ({ deck, startAt }) => {
         </span>
         <button type="button" aria-label="Next slide" onClick={() => goTo(index + 1)} disabled={isEnd}>
           <Icon name="chevronRight" size={20} />
+        </button>
+        <button
+          type="button"
+          aria-label="Telescope spotlight (T)"
+          title="Telescope spotlight (T)"
+          aria-pressed={isSpotlight}
+          onClick={() => setIsSpotlight((on) => !on)}
+        >
+          <Icon name="spotlight" size={18} />
         </button>
         <button type="button" aria-label="Black screen (B)" title="Black screen (B)" onClick={() => setIsBlack((black) => !black)}>
           <Icon name="moon" size={18} />

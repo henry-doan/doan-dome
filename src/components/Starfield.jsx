@@ -2,6 +2,9 @@ import { useEffect, useEffectEvent, useRef } from 'react'
 import { seededRandom } from '../lib/random.js'
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+// Twinkle brightness is rounded to this many steps, so each frame paints a
+// handful of batches instead of one fill per star.
+const ALPHA_STEPS = 8
 
 /**
  * A twinkling night sky drawn on a canvas, with an occasional shooting star.
@@ -14,6 +17,10 @@ const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)'
  * the streak bursts into sparks and onCatch({ x, y }) gets the point,
  * relative to the canvas. `streakSlowdown` stretches each streak's life so
  * they are easier to catch.
+ *
+ * With `showers`, every `showerMin`–`showerMax` seconds a meteor shower
+ * bursts: a dozen or so meteors streaking out from one point in the sky
+ * over a few seconds, as real showers seem to. `onShower` is told when one starts.
  */
 const Starfield = ({
   density = 0.00018,
@@ -23,12 +30,17 @@ const Starfield = ({
   seed = 'sky',
   drift = 0,
   streakSlowdown = 1,
+  showers = false,
+  showerMin = 25,
+  showerMax = 50,
+  onShower,
   onCatch,
   className = '',
 }) => {
   const canvasRef = useRef(null)
   const canCatch = Boolean(onCatch)
   const handleCatch = useEffectEvent((point) => onCatch?.(point))
+  const handleShower = useEffectEvent(() => onShower?.())
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -43,6 +55,8 @@ const Starfield = ({
     let height = 0
     let frame = 0
     let nextStreakAt = 0
+    let nextShowerAt = 0
+    let meteors = []
     let colors = { star: '#fff', streak: '#fff' }
     const isStill = reducedMotion()
 
@@ -55,7 +69,8 @@ const Starfield = ({
     }
 
     const resize = () => {
-      const ratio = Math.min(window.devicePixelRatio || 1, 2)
+      // Dots don't need full retina sharpness; 1.5× keeps them crisp for far less drawing.
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5)
       width = canvas.clientWidth
       height = canvas.clientHeight
       canvas.width = Math.round(width * ratio)
@@ -87,20 +102,50 @@ const Starfield = ({
       nextStreakAt = now + (shootingMin + random() * (shootingMax - shootingMin)) * 1000
     }
 
+    // A meteor shower: meteors fly out from one radiant point, a few at a time.
+    const launchShower = (now) => {
+      const radiant = { x: width * (0.2 + random() * 0.6), y: height * (-0.1 + random() * 0.35) }
+      const count = 7 + Math.floor(random() * 6)
+      for (let index = 0; index < count; index += 1) meteors.push({ at: now + random() * 3600, radiant })
+      nextShowerAt = now + (showerMin + random() * (showerMax - showerMin)) * 1000
+      handleShower()
+    }
+
+    const launchMeteor = (now, { radiant }) => {
+      const angle = Math.PI / 2 + (random() - 0.5) * 2.4
+      const start = 30 + random() * 240
+      streaks.push({
+        x: radiant.x + Math.cos(angle) * start,
+        y: radiant.y + Math.sin(angle) * start,
+        dx: Math.cos(angle),
+        dy: Math.sin(angle),
+        born: now,
+        life: 450 + random() * 650,
+        length: 45 + random() * 110,
+        distance: 110 + random() * 230,
+        width: 1.1 + random() * 0.8,
+      })
+    }
+
     const draw = (now) => {
       context.clearRect(0, 0, width, height)
       context.fillStyle = colors.star
+      const batches = Array.from({ length: ALPHA_STEPS + 1 }, () => new Path2D())
       for (const star of stars) {
         const x = (((star.x + driftOffset) % width) + width) % width
-        context.globalAlpha = isStill ? 0.75 : 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(now / 1000 * star.speed + star.phase))
-        context.beginPath()
-        context.arc(x, star.y, star.r, 0, Math.PI * 2)
-        context.fill()
+        const alpha = isStill ? 0.75 : 0.45 + 0.55 * (0.5 + 0.5 * Math.sin((now / 1000) * star.speed + star.phase))
+        const batch = batches[Math.round(alpha * ALPHA_STEPS)]
+        batch.moveTo(x + star.r, star.y)
+        batch.arc(x, star.y, star.r, 0, Math.PI * 2)
       }
+      batches.forEach((batch, step) => {
+        context.globalAlpha = step / ALPHA_STEPS
+        context.fill(batch)
+      })
       streaks = streaks.filter((streak) => now - streak.born < streak.life)
       for (const streak of streaks) {
         const progress = (now - streak.born) / streak.life
-        const travel = progress * width * 0.35
+        const travel = progress * (streak.distance ?? width * 0.35)
         const headX = streak.x + streak.dx * travel
         const headY = streak.y + streak.dy * travel
         streak.head = [headX, headY]
@@ -109,7 +154,7 @@ const Starfield = ({
         gradient.addColorStop(1, 'transparent')
         context.globalAlpha = Math.sin(progress * Math.PI)
         context.strokeStyle = gradient
-        context.lineWidth = 1.6
+        context.lineWidth = streak.width ?? 1.6
         context.beginPath()
         context.moveTo(headX, headY)
         context.lineTo(headX - streak.dx * streak.length, headY - streak.dy * streak.length)
@@ -152,10 +197,6 @@ const Starfield = ({
     }
     const handleLeave = () => {
       isPaused = false
-      host.style.cursor = ''
-    }
-    const handleMove = (event) => {
-      if (canCatch) host.style.cursor = streakAt(event) ? 'pointer' : ''
     }
     const handleDown = (event) => {
       const hit = canCatch && streakAt(event)
@@ -168,12 +209,10 @@ const Starfield = ({
         const speed = 30 + random() * 90
         sparks.push({ x: hit.x, y: hit.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, r: 0.8 + random() * 1.4, born: now, life: 600 + random() * 500 })
       }
-      host.style.cursor = ''
       handleCatch({ x: hit.x, y: hit.y })
     }
     host?.addEventListener('pointerenter', handleEnter)
     host?.addEventListener('pointerleave', handleLeave)
-    host?.addEventListener('pointermove', handleMove)
     host?.addEventListener('pointerdown', handleDown)
 
     let last = 0
@@ -183,6 +222,11 @@ const Starfield = ({
       if (drift && !isPaused && last) driftOffset += (drift * Math.min(now - last, 100)) / 1000
       last = now
       if (shooting && now >= nextStreakAt) launchStreak(now)
+      if (showers && now >= nextShowerAt) launchShower(now)
+      if (meteors.length) {
+        for (const meteor of meteors.filter((item) => item.at <= now)) launchMeteor(now, meteor)
+        meteors = meteors.filter((item) => item.at > now)
+      }
       draw(now)
     }
 
@@ -201,6 +245,8 @@ const Starfield = ({
     if (isStill) draw(0)
     else {
       nextStreakAt = performance.now() + 2500
+      // The first shower comes fairly soon, so it's not missed.
+      nextShowerAt = performance.now() + 10000 + random() * 6000
       frame = requestAnimationFrame(tick)
     }
 
@@ -210,11 +256,9 @@ const Starfield = ({
       themeObserver.disconnect()
       host?.removeEventListener('pointerenter', handleEnter)
       host?.removeEventListener('pointerleave', handleLeave)
-      host?.removeEventListener('pointermove', handleMove)
       host?.removeEventListener('pointerdown', handleDown)
-      if (host) host.style.cursor = ''
     }
-  }, [density, seed, shooting, shootingMin, shootingMax, drift, streakSlowdown, canCatch])
+  }, [density, seed, shooting, shootingMin, shootingMax, drift, streakSlowdown, showers, showerMin, showerMax, canCatch])
 
   return <canvas ref={canvasRef} className={`starfield ${className}`} aria-hidden="true" />
 }

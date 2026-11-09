@@ -1,113 +1,39 @@
 /*
  * Doan Dome — an observatory under the stars.
- * Three app themes share one set of tokens: Midnight (indigo, silver and
- * gold), Parchment (an antique star atlas) and Nebula (violet, pink, teal).
- * The header always uses the logo's deep midnight, #03132F.
+ * One look for the whole site: Nebula, deep violet with the logo's gold.
+ * The header uses the logo's deep violet, #190134.
  */
 
-:root,
-:root[data-theme='midnight'] {
+:root {
   color-scheme: dark;
-  --bg: #0b1026;
-  --sidebar: #0d1433;
-  --surface: #141b3d;
-  --surface-2: #1b2450;
-  --ink: #e8ecf5;
-  --muted: #9aa6c2;
-  --line: rgb(201 209 224 / 0.14);
-  --line-strong: rgb(201 209 224 / 0.28);
+  --bg: #160a2b;
+  --sidebar: #1c0e36;
+  --surface: #241443;
+  --surface-2: #2e1a53;
+  --ink: #f3eaf8;
+  --muted: #b9a6cf;
+  --line: rgb(212 175 95 / 0.16);
+  --line-strong: rgb(212 175 95 / 0.32);
   --gold: #d4af5f;
   --gold-bright: #e8c97a;
   --accent: #d4af5f;
   --accent-ink: #1a1405;
   --accent-wash: rgb(212 175 95 / 0.16);
-  --star: #e9eefb;
-  --streak: #fff6d8;
-  --const-line: rgb(212 175 95 / 0.5);
-  --const-star: #f4f1e8;
-  --canvas-bg: #070b1c;
-  --danger: #ff8a7f;
-  --shadow: 0 10px 30px rgb(0 0 0 / 0.45);
-}
-
-:root[data-theme='parchment'] {
-  color-scheme: light;
-  --bg: #f2e8d5;
-  --sidebar: #e8dbc0;
-  --surface: #fbf6ea;
-  --surface-2: #fffdf7;
-  --ink: #2b1f14;
-  --muted: #6b5a45;
-  --line: rgb(59 42 26 / 0.16);
-  --line-strong: rgb(59 42 26 / 0.3);
-  --gold: #a8792c;
-  --gold-bright: #8a5f1c;
-  --accent: #a23b2a;
-  --accent-ink: #ffffff;
-  --accent-wash: rgb(162 59 42 / 0.1);
-  --star: #3b2a1a;
-  --streak: #8a5f1c;
-  --const-line: rgb(59 42 26 / 0.45);
-  --const-star: #3b2a1a;
-  --canvas-bg: #e2d3b6;
-  --danger: #a23b2a;
-  --shadow: 0 10px 30px rgb(59 42 26 / 0.18);
-}
-
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    color-scheme: light;
-    --bg: #f2e8d5;
-    --sidebar: #e8dbc0;
-    --surface: #fbf6ea;
-    --surface-2: #fffdf7;
-    --ink: #2b1f14;
-    --muted: #6b5a45;
-    --line: rgb(59 42 26 / 0.16);
-    --line-strong: rgb(59 42 26 / 0.3);
-    --gold: #a8792c;
-    --gold-bright: #8a5f1c;
-    --accent: #a23b2a;
-    --accent-ink: #ffffff;
-    --accent-wash: rgb(162 59 42 / 0.1);
-    --star: #3b2a1a;
-    --streak: #8a5f1c;
-    --const-line: rgb(59 42 26 / 0.45);
-    --const-star: #3b2a1a;
-    --canvas-bg: #e2d3b6;
-    --danger: #a23b2a;
-    --shadow: 0 10px 30px rgb(59 42 26 / 0.18);
-  }
-}
-
-:root[data-theme='nebula'] {
-  color-scheme: dark;
-  --bg: #160d29;
-  --sidebar: #1e1236;
-  --surface: #26173f;
-  --surface-2: #301d4f;
-  --ink: #f3eaf8;
-  --muted: #b9a6cf;
-  --line: rgb(229 139 184 / 0.16);
-  --line-strong: rgb(229 139 184 / 0.32);
-  --gold: #e8c97a;
-  --gold-bright: #f4dc9c;
-  --accent: #e58bb8;
-  --accent-ink: #2a0f22;
-  --accent-wash: rgb(229 139 184 / 0.16);
   --star: #ffffff;
-  --streak: #ffd1ea;
-  --const-line: rgb(63 184 175 / 0.6);
-  --const-star: #ffffff;
-  --canvas-bg: #10081e;
+  --streak: #fff6d8;
+  --const-line: rgb(212 175 95 / 0.55);
+  --const-star: #f8f1ff;
+  --canvas-bg: #0f061f;
   --danger: #ff8fa3;
   --shadow: 0 10px 30px rgb(0 0 0 / 0.5);
 }
 
 :root {
-  --chrome: #03132f;
-  --chrome-ink: #e8ecf5;
-  --chrome-muted: #9aa6c2;
+  /* The brass telescope pointer, used everywhere; it clicks at the sparkle by the lens. */
+  --cursor-telescope: image-set(url('./assets/telescope-cursor.png') 1x, url('./assets/telescope-cursor@2x.png') 2x) 5 11, auto;
+  --chrome: #190134;
+  --chrome-ink: #f3eaf8;
+  --chrome-muted: #b9a6cf;
   --chrome-line: rgb(212 175 95 / 0.22);
   --radius-sm: 6px;
   --radius: 10px;
@@ -148,8 +74,18 @@ textarea {
   color: inherit;
 }
 
-button {
-  cursor: pointer;
+html,
+a,
+button,
+select,
+label,
+summary,
+input[type='checkbox'],
+input[type='radio'],
+input[type='range'],
+input[type='color'],
+input[type='file'] {
+  cursor: var(--cursor-telescope);
 }
 
 h1,
@@ -185,16 +121,9 @@ a {
 }
 
 .logo-compact img,
-.logo-icon,
 .logo-full {
   display: block;
   user-select: none;
-}
-
-.logo-icon {
-  object-fit: cover;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px var(--chrome-line);
 }
 
 .wordmark {
@@ -226,7 +155,7 @@ a {
 
 .button:disabled {
   opacity: 0.55;
-  cursor: default;
+  cursor: var(--cursor-telescope);
 }
 
 .button-large {
@@ -246,12 +175,12 @@ a {
 
 .button-ghost {
   border-color: rgb(232 201 122 / 0.6);
-  background: rgb(3 19 47 / 0.55);
+  background: rgb(25 1 52 / 0.55);
   color: #f4f1e8;
 }
 
 .button-ghost:hover {
-  background: rgb(3 19 47 / 0.8);
+  background: rgb(25 1 52 / 0.8);
   border-color: #e8c97a;
 }
 
@@ -320,7 +249,7 @@ a {
 
 .tool-button:disabled {
   opacity: 0.35;
-  cursor: default;
+  cursor: var(--cursor-telescope);
 }
 
 .tool-button.is-active,
@@ -379,8 +308,7 @@ a {
 }
 
 .view-switch,
-.segmented,
-.theme-picker {
+.segmented {
   display: inline-flex;
   padding: 2px;
   border: 1px solid var(--line-strong);
@@ -409,32 +337,6 @@ a {
 .segmented button[aria-checked='true'] {
   background: var(--accent);
   color: var(--accent-ink);
-}
-
-.theme-picker {
-  border-color: var(--chrome-line);
-  background: transparent;
-}
-
-.theme-option {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 26px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--chrome-muted);
-}
-
-.theme-option:hover {
-  color: var(--chrome-ink);
-  background: rgb(255 255 255 / 0.08);
-}
-
-.theme-option[aria-checked='true'] {
-  background: rgb(212 175 95 / 0.22);
-  color: #e8c97a;
 }
 
 /* App shell ------------------------------------------------------------------ */
@@ -490,7 +392,7 @@ a {
   gap: 16px;
   height: var(--header-h);
   padding: 0 18px;
-  background: linear-gradient(180deg, rgb(3 19 47 / 0.9), rgb(3 19 47 / 0.72));
+  background: linear-gradient(180deg, rgb(25 1 52 / 0.9), rgb(25 1 52 / 0.72));
   color: var(--chrome-ink);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
@@ -508,7 +410,7 @@ a {
 
 @supports not (backdrop-filter: blur(1px)) {
   .app-header {
-    background: rgb(3 19 47 / 0.94);
+    background: rgb(25 1 52 / 0.94);
   }
 }
 
@@ -542,14 +444,14 @@ a {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 34%, #1d3566, #050d22 70%);
+  background: radial-gradient(circle at 38% 34%, #3a1d6b, #140428 70%);
   box-shadow:
     0 0 0 2px #b8924a,
-    0 0 0 4px rgb(3 19 47 / 0.9),
+    0 0 0 4px rgb(25 1 52 / 0.9),
     0 0 0 5px rgb(212 175 95 / 0.35),
     inset 0 0 10px rgb(0 0 0 / 0.6);
   color: #e8c97a;
-  cursor: pointer;
+  cursor: var(--cursor-telescope);
   transition: box-shadow 200ms ease;
 }
 
@@ -574,7 +476,7 @@ a {
 .eyepiece:focus-within .eyepiece-lens {
   box-shadow:
     0 0 0 2px #e8c97a,
-    0 0 0 4px rgb(3 19 47 / 0.9),
+    0 0 0 4px rgb(25 1 52 / 0.9),
     0 0 0 5px rgb(232 201 122 / 0.55),
     0 0 18px rgb(232 201 122 / 0.35),
     inset 0 0 10px rgb(0 0 0 / 0.6);
@@ -605,7 +507,7 @@ a {
 .eyepiece.has-query .eyepiece-tube {
   width: min(380px, 42vw);
   border-color: rgb(212 175 95 / 0.45);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.07), transparent 45%, rgb(0 0 0 / 0.25)), rgb(5 13 34 / 0.8);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.07), transparent 45%, rgb(0 0 0 / 0.25)), rgb(20 4 40 / 0.8);
 }
 
 .eyepiece-tube input::-webkit-search-cancel-button {
@@ -713,7 +615,7 @@ a {
 }
 
 .dial-disc {
-  fill: rgb(3 19 47 / 0.82);
+  fill: rgb(25 1 52 / 0.82);
 }
 
 @supports (backdrop-filter: blur(1px)) {
@@ -792,7 +694,7 @@ a {
   width: var(--item);
   height: var(--item);
   border-radius: 50%;
-  background: rgb(5 13 34 / 0.9);
+  background: rgb(20 4 40 / 0.9);
   box-shadow: 0 0 0 1px rgb(212 175 95 / 0.35);
   color: var(--chrome-muted);
   text-decoration: none;
@@ -808,7 +710,7 @@ a {
 }
 
 .dial-item.is-active {
-  background: radial-gradient(circle, rgb(232 201 122 / 0.35), rgb(5 13 34 / 0.95) 75%);
+  background: radial-gradient(circle, rgb(232 201 122 / 0.35), rgb(20 4 40 / 0.95) 75%);
   box-shadow: 0 0 0 2px #e8c97a, 0 0 20px rgb(232 201 122 / 0.5);
   color: #f4dc9c;
 }
@@ -842,10 +744,10 @@ a {
   padding: 8px 6px 0;
   border: 0;
   border-radius: var(--hub-r) var(--hub-r) 0 0;
-  background: radial-gradient(circle at 50% 100%, #10224a, #03132f 70%);
+  background: radial-gradient(circle at 50% 100%, #2a0f52, #190134 70%);
   box-shadow:
     0 0 0 2px #b8924a,
-    0 0 0 5px rgb(3 19 47 / 0.85),
+    0 0 0 5px rgb(25 1 52 / 0.85),
     0 0 0 6px rgb(212 175 95 / 0.3),
     0 -6px 24px rgb(0 0 0 / 0.4);
   color: #e8c97a;
@@ -857,7 +759,7 @@ a {
 .dial-hub:focus-visible {
   box-shadow:
     0 0 0 2px #e8c97a,
-    0 0 0 5px rgb(3 19 47 / 0.85),
+    0 0 0 5px rgb(25 1 52 / 0.85),
     0 0 0 6px rgb(232 201 122 / 0.5),
     0 0 22px rgb(232 201 122 / 0.35);
   outline: none;
@@ -984,9 +886,233 @@ a {
   pointer-events: none;
 }
 
+/* The real night sky (d3-celestial catalog), shown only while exploring. */
+.sky-chart {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 600ms ease;
+}
+
+.sky-chart.is-exploring {
+  z-index: 2;
+  opacity: 1;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+
+.sky-chart.is-dragging {
+  cursor: grabbing;
+}
+
+/* Exploring: the panel fills the window and the presentations step aside. */
+/* Exploring takes over the whole screen (browser full screen where it's
+   available, otherwise the whole window), above the header and the dial. */
+.sky-panel.is-exploring {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  /* Darker than the app: a deep night with only a faint violet glow overhead. */
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 0%, rgb(46 26 83 / 0.35), transparent 70%),
+    #06020d;
+}
+
+/* The presentations are hidden while exploring; stop their drift and twinkle
+   animations too, so the browser only animates the sky. */
+.sky-panel.is-exploring .sky-content {
+  visibility: hidden;
+  transition: opacity 650ms ease, transform 650ms ease, visibility 0s 650ms;
+}
+
+.sky-panel.is-exploring .sky-content * {
+  animation-play-state: paused !important;
+}
+
+/* No background blur over the moving sky: re-blurring every frame is costly. */
+.sky-panel.is-exploring .sky-explore-button,
+.sky-panel.is-exploring .sky-explore-hint,
+.sky-panel.is-exploring .meteor-notice {
+  backdrop-filter: none;
+  background: rgb(10 4 20 / 0.82);
+}
+
+.sky-panel.is-exploring .sky-explore-bar {
+  top: max(16px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+}
+
+.sky-panel.is-exploring .sky-explore-hint {
+  top: max(16px, env(safe-area-inset-top));
+  left: max(18px, env(safe-area-inset-left));
+}
+
+@media (max-width: 900px) {
+  .sky-panel.is-exploring .sky-explore-hint {
+    top: calc(max(16px, env(safe-area-inset-top)) + 46px);
+    right: max(18px, env(safe-area-inset-right));
+  }
+}
+
+.sky-panel.is-exploring .sky-content {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
+}
+
+/* While exploring, its own starfield: twinkling stars, shooting stars and
+   meteor showers under the real sky. */
+.explore-starfield {
+  z-index: 1;
+  animation: explore-fade-in 900ms ease both;
+}
+
+@keyframes explore-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Fades in, lingers, and fades out on its own. */
+.meteor-notice {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 6px 14px;
+  border: 1px solid rgb(232 201 122 / 0.45);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sidebar) 80%, transparent);
+  color: var(--gold-bright);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: meteor-notice 4200ms ease both;
+}
+
+@keyframes meteor-notice {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -6px);
+  }
+  12%,
+  75% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .meteor-notice {
+    top: auto;
+    bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
+
+.sky-explore-bar {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+}
+
+.sky-explore-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sidebar) 75%, transparent);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+}
+
+.sky-explore-button .icon {
+  color: var(--gold);
+}
+
+.sky-explore-button:hover,
+.sky-explore-button[aria-pressed='true'] {
+  border-color: var(--gold);
+  background: color-mix(in srgb, var(--surface-2) 85%, transparent);
+  color: var(--gold-bright);
+}
+
+.sky-explore-hint {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  z-index: 3;
+  max-width: calc(100% - 360px);
+  margin: 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sidebar) 80%, transparent);
+  color: var(--muted);
+  font-size: 13px;
+  pointer-events: none;
+  animation: pop-in 300ms ease both;
+}
+
+.hint-touch {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .hint-fine {
+    display: none;
+  }
+
+  .hint-touch {
+    display: inline;
+  }
+}
+
+@media (max-width: 900px) {
+  .sky-explore-hint {
+    top: 56px;
+    right: 14px;
+    max-width: none;
+    border-radius: var(--radius);
+  }
+}
+
+.sky-explore-hint strong {
+  color: var(--gold-bright);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .sky-content {
   position: relative;
-  padding: 18px 24px 36px;
+  /* The top leaves room for the explore button above the first constellations. */
+  padding: 58px 24px 36px;
   transition: transform 650ms cubic-bezier(0.55, 0, 0.3, 1), opacity 650ms ease, filter 650ms ease;
   transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%);
 }
@@ -1121,22 +1247,25 @@ a {
 }
 
 /* Tonight's moon, top right of the sky. */
-.sky-moon {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  z-index: 2;
+/* Tonight's moon in the header, with its phase and a line about the night. */
+.header-moon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 6px;
   color: var(--const-star);
 }
 
-.sky-moon svg {
+.header-moon svg {
   display: block;
+  flex: none;
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--gold-bright) 45%, transparent));
 }
 
 .moon-dark {
   fill: currentColor;
-  opacity: 0.1;
+  opacity: 0.18;
 }
 
 .moon-lit {
@@ -1150,10 +1279,29 @@ a {
   opacity: 0.55;
 }
 
-.sky-moon-label {
+.header-moon-text {
+  display: grid;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.header-moon-text strong {
+  color: var(--gold-bright);
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.header-moon-text span {
+  color: var(--chrome-muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.header-moon-card {
   position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
+  top: calc(100% + 10px);
+  left: 0;
   display: grid;
   padding: 6px 10px;
   border: 1px solid var(--line-strong);
@@ -1169,13 +1317,17 @@ a {
   transition: opacity 150ms ease, transform 150ms ease;
 }
 
-.sky-moon-label strong {
+.header-moon-card strong {
   color: var(--ink);
   font-family: var(--font-serif);
   font-size: 15px;
 }
 
-.sky-moon:hover .sky-moon-label {
+.header-moon-card-line {
+  display: none;
+}
+
+.header-moon:hover .header-moon-card {
   opacity: 1;
   transform: none;
 }
@@ -1441,7 +1593,7 @@ a {
 }
 
 .deck-row {
-  cursor: pointer;
+  cursor: var(--cursor-telescope);
 }
 
 .deck-row:hover {
@@ -1449,7 +1601,7 @@ a {
 }
 
 .deck-row.is-trashed {
-  cursor: default;
+  cursor: var(--cursor-telescope);
 }
 
 .deck-row td {
@@ -1624,7 +1776,7 @@ a.deck-title:hover {
 
 .menu-item:disabled {
   opacity: 0.4;
-  cursor: default;
+  cursor: var(--cursor-telescope);
 }
 
 .menu-item.is-danger,
@@ -1638,12 +1790,19 @@ a.deck-title:hover {
   border-top: 1px solid var(--line);
 }
 
-.menu-note {
-  max-width: 240px;
+.menu-sightings {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 4px 10px 6px;
-  color: var(--muted);
+  color: var(--gold-bright);
   font-size: 13px;
-  white-space: normal;
+}
+
+.menu-sightings-kinds {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .profile-summary {
@@ -1674,7 +1833,7 @@ a.deck-title:hover {
 }
 
 .dialog::backdrop {
-  background: rgb(3 8 20 / 0.65);
+  background: rgb(14 3 24 / 0.65);
 }
 
 .dialog-body {
@@ -1753,7 +1912,7 @@ a.deck-title:hover {
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  cursor: pointer;
+  cursor: var(--cursor-telescope);
 }
 
 .folder-choice:has(input:checked) {
@@ -1777,8 +1936,8 @@ a.deck-title:hover {
   padding: 10px 10px 10px 18px;
   border-left: 3px solid #d4af5f;
   border-radius: var(--radius);
-  background: #03132f;
-  color: #e8ecf5;
+  background: #190134;
+  color: #f3eaf8;
   box-shadow: 0 10px 30px rgb(0 0 0 / 0.4);
   animation: pop-in 160ms ease-out;
 }
@@ -1802,7 +1961,7 @@ a.deck-title:hover {
   border: 0;
   border-radius: var(--radius-sm);
   background: none;
-  color: #9aa6c2;
+  color: #b9a6cf;
 }
 
 /* Slides ------------------------------------------------------------------ */
@@ -1885,7 +2044,9 @@ a.deck-title:hover {
 
 .editor-logo {
   display: flex;
-  border-radius: 50%;
+  flex: none;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
 }
 
 .editor-title input {
@@ -2037,7 +2198,7 @@ a.deck-title:hover {
 .strip-more {
   width: 28px;
   height: 28px;
-  background: rgb(3 19 47 / 0.75);
+  background: rgb(25 1 52 / 0.75);
   color: #fff;
 }
 
@@ -2139,7 +2300,7 @@ a.deck-title:hover {
 .snap-guide {
   position: absolute;
   pointer-events: none;
-  background: #e58bb8;
+  background: #e8c97a;
 }
 
 .snap-guide.is-x {
@@ -2301,7 +2462,7 @@ a.deck-title:hover {
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   background: var(--surface-2);
-  cursor: pointer;
+  cursor: var(--cursor-telescope);
 }
 
 .toggle-row,
@@ -2337,7 +2498,11 @@ a.deck-title:hover {
 }
 
 .show:not(.is-idle) {
-  cursor: default;
+  cursor: var(--cursor-telescope);
+}
+
+.show-controls {
+  cursor: var(--cursor-telescope);
 }
 
 .show-stage {
@@ -2384,7 +2549,7 @@ a.deck-title:hover {
 }
 
 .show-end {
-  color: #9aa6c2;
+  color: #b9a6cf;
   font-size: 18px;
 }
 
@@ -2404,8 +2569,8 @@ a.deck-title:hover {
   padding: 6px;
   border: 1px solid rgb(212 175 95 / 0.3);
   border-radius: 999px;
-  background: rgb(3 19 47 / 0.85);
-  color: #e8ecf5;
+  background: rgb(25 1 52 / 0.85);
+  color: #f3eaf8;
   transition: opacity 300ms ease;
 }
 
@@ -2438,13 +2603,1003 @@ a.deck-title:hover {
   text-align: center;
 }
 
+/* Telescope spotlight: everything dims except a round eyepiece view that
+   follows the pointer. The huge shadow is the darkness around the lens. */
+.show-lens {
+  --lens: 180px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: var(--lens);
+  height: var(--lens);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px #d4af5f,
+    0 0 0 5px rgb(25 1 52 / 0.9),
+    0 0 0 6px rgb(232 201 122 / 0.45),
+    0 0 40px 8px rgb(0 0 0 / 0.9),
+    0 0 0 300vmax rgb(4 0 10 / 0.86);
+  pointer-events: none;
+  transition: width 120ms ease, height 120ms ease;
+  animation: lens-in 260ms ease both;
+}
+
+/* Faint crosshair ticks at the edge of the eyepiece. */
+.show-lens-ticks {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    linear-gradient(#e8c97a, #e8c97a) 50% 0 / 1px 12px no-repeat,
+    linear-gradient(#e8c97a, #e8c97a) 50% 100% / 1px 12px no-repeat,
+    linear-gradient(#e8c97a, #e8c97a) 0 50% / 12px 1px no-repeat,
+    linear-gradient(#e8c97a, #e8c97a) 100% 50% / 12px 1px no-repeat;
+  opacity: 0.7;
+}
+
+@keyframes lens-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.show.is-spotlight,
+.show.is-spotlight:not(.is-idle) {
+  cursor: none;
+}
+
+.show-controls {
+  z-index: 3;
+}
+
+.show-controls button[aria-pressed='true'] {
+  background: rgb(212 175 95 / 0.25);
+  color: #e8c97a;
+}
+
+/* Slides are drawn here, off screen and at full size, while exporting. */
+.export-stage {
+  position: fixed;
+  top: 0;
+  left: -100000px;
+  pointer-events: none;
+}
+
+/* Star book easter egg ------------------------------------------------------- */
+
+/* A faint book constellation under the List view; it brightens when found. */
+.book-egg {
+  display: block;
+  margin: 36px 8px 0 auto;
+  padding: 6px;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  opacity: 0.32;
+  transition: opacity 300ms ease, filter 300ms ease, transform 300ms ease;
+}
+
+/* In the Sky views it sits on its own row after the last constellation, at
+   the right, so it never covers a presentation. */
+.book-egg.in-sky {
+  margin: 28px 0 0 auto;
+  opacity: 0.4;
+}
+
+.book-egg:hover,
+.book-egg:focus-visible {
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgb(232 201 122 / 0.45));
+  transform: translateY(-2px) rotate(-3deg);
+}
+
+.book-constellation {
+  display: block;
+  overflow: visible;
+}
+
+.book-lines {
+  fill: none;
+  stroke: var(--const-line);
+  stroke-width: 0.8;
+  stroke-dasharray: 2 2.5;
+  stroke-linecap: round;
+}
+
+.book-stars {
+  fill: var(--const-star);
+}
+
+.book-egg:hover .book-stars circle {
+  animation: twinkle 1.6s ease-in-out infinite;
+}
+
+.book-egg:hover .book-stars circle:nth-child(3n) {
+  animation-delay: 0.4s;
+}
+
+.book-egg:hover .book-stars circle:nth-child(3n + 1) {
+  animation-delay: 0.8s;
+}
+
+/* The book flips through its pages, grows to fill the window, then the
+   Doan Docs open in this tab. */
+.star-book-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 45%, rgb(51 22 107 / 0.92), rgb(16 3 31 / 0.97) 70%);
+  animation: star-book-backdrop 1900ms ease both;
+}
+
+.star-book-caption {
+  position: absolute;
+  top: calc(50% - 116px - 92px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  color: #e8c97a;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px rgb(232 201 122 / 0.45);
+  animation: star-book-caption 1900ms ease both;
+}
+
+.star-book-caption::before,
+.star-book-caption::after {
+  content: '✦';
+  margin: 0 0.6em;
+  font-size: 0.5em;
+  vertical-align: 0.35em;
+  opacity: 0.8;
+}
+
+@keyframes star-book-caption {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+    letter-spacing: 0.3em;
+  }
+  25%,
+  75% {
+    opacity: 1;
+    transform: none;
+    letter-spacing: 0.12em;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+}
+
+.star-book {
+  position: relative;
+  width: 360px;
+  height: 232px;
+  animation: star-book-grow 1900ms cubic-bezier(0.5, 0, 0.3, 1) both;
+}
+
+.star-book-cover,
+.star-book-page {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+}
+
+.star-book-cover.is-left {
+  left: 0;
+}
+
+.star-book-cover.is-right,
+.star-book-page {
+  left: 50%;
+}
+
+.star-book-page {
+  z-index: calc(20 - var(--i));
+  transform-origin: 0 50%;
+  transform-style: preserve-3d;
+  animation: star-book-flip 520ms ease-in-out calc(330ms + var(--i) * 170ms) both;
+}
+
+.star-book-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(212 175 95 / 0.75);
+  overflow: hidden;
+  /* The logo's own violet, so the artwork sits on the page without a box. */
+  background: #1b0230;
+  box-shadow: inset 0 0 18px rgb(0 0 0 / 0.5), 0 0 22px rgb(232 201 122 / 0.18);
+  backface-visibility: hidden;
+}
+
+.star-book-cover.is-left .star-book-face,
+.star-book-face.is-back {
+  border-radius: 10px 2px 2px 10px;
+}
+
+.star-book-cover.is-right .star-book-face,
+.star-book-page .star-book-face.is-front {
+  border-radius: 2px 10px 10px 2px;
+}
+
+.star-book-face.is-back {
+  transform: rotateY(180deg);
+}
+
+.star-book-face img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
+@keyframes star-book-backdrop {
+  from {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+}
+
+@keyframes star-book-grow {
+  0% {
+    opacity: 0;
+    transform: translate(var(--from-x), var(--from-y)) scale(0.15) rotate(-8deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  32% {
+    transform: translate(0, 0) scale(0.9) rotate(0deg);
+  }
+  78% {
+    opacity: 1;
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 30px rgb(232 201 122 / 0.35));
+  }
+  100% {
+    opacity: 0;
+    transform: scale(5);
+    filter: drop-shadow(0 0 60px rgb(232 201 122 / 0.9)) brightness(1.6);
+  }
+}
+
+@keyframes star-book-flip {
+  0% {
+    transform: perspective(1100px) rotateY(0deg);
+  }
+  50% {
+    z-index: 30;
+  }
+  100% {
+    z-index: calc(30 + var(--i));
+    transform: perspective(1100px) rotateY(-180deg);
+  }
+}
+
+/* UFO easter eggs --------------------------------------------------------------
+   Everything here animates only while a UFO or its scene is on screen. */
+
+.ufo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  padding: 0;
+  border: 0;
+  background: none;
+  filter: drop-shadow(0 0 10px rgb(232 201 122 / 0.35));
+  will-change: transform;
+}
+
+.ufo-art {
+  display: block;
+  overflow: visible;
+}
+
+.ufo-tictac {
+  filter: drop-shadow(0 0 8px rgb(255 255 255 / 0.55));
+  animation: ufo-appear 500ms ease both;
+}
+
+@keyframes ufo-appear {
+  from {
+    opacity: 0;
+  }
+}
+
+.ufo-lights circle {
+  fill: #fff6d8;
+  animation: ufo-blink 900ms ease-in-out infinite alternate;
+}
+
+@keyframes ufo-blink {
+  from {
+    fill: #e8c97a;
+    opacity: 0.35;
+  }
+}
+
+.ufo-freighter-art {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.ufo-freighter-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+/* Sits over the painted exhaust at the back (left) of the freighter. */
+.ufo-engine-glow {
+  position: absolute;
+  top: 55%;
+  left: -4%;
+  width: 22%;
+  height: 26%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 60% 50%, rgb(255 255 255 / 0.9), rgb(184 164 255 / 0.6) 40%, transparent 70%);
+  animation: ufo-engine 140ms linear infinite alternate;
+}
+
+@keyframes ufo-engine {
+  from {
+    opacity: 0.45;
+    transform: scaleX(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1.1);
+  }
+}
+
+/* The saucer's tractor beam. */
+.ufo-beam {
+  position: absolute;
+  z-index: 3;
+  width: 170px;
+  margin-left: -85px;
+  background: linear-gradient(rgb(244 220 156 / 0.6), rgb(232 201 122 / 0.06));
+  clip-path: polygon(40% 0, 60% 0, 100% 100%, 0 100%);
+  pointer-events: none;
+  animation: ufo-beam 450ms ease-out both;
+}
+
+@keyframes ufo-beam {
+  from {
+    opacity: 0;
+    transform: scaleY(0.2);
+    transform-origin: top;
+  }
+}
+
+/* A presentation constellation being beamed up, and dropped back. */
+.constellation.is-abducted {
+  opacity: 0;
+  transform: translateY(var(--abduct-y)) scale(0.12);
+  transition:
+    transform 1500ms cubic-bezier(0.55, 0, 0.75, 0.4),
+    opacity 1500ms ease-in;
+}
+
+/* A real constellation lifted off the night sky. */
+.ufo-lifted {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  transition:
+    transform 1500ms cubic-bezier(0.55, 0, 0.75, 0.4),
+    opacity 1500ms ease-in;
+}
+
+.ufo-lifted.is-up {
+  opacity: 0;
+  transform: translateY(var(--lift-y)) scale(0.12);
+}
+
+.ufo-lifted polyline {
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 1.4;
+}
+
+.ufo-lifted circle {
+  fill: #fff6d8;
+}
+
+.ufo-notice {
+  position: fixed;
+  left: 50%;
+  bottom: 112px;
+  z-index: 5;
+  max-width: calc(100vw - 32px);
+  margin: 0;
+  padding: 7px 16px;
+  border: 1px solid rgb(232 201 122 / 0.45);
+  border-radius: 999px;
+  background: rgb(10 4 20 / 0.88);
+  color: var(--gold-bright);
+  font-size: 13px;
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: meteor-notice 4200ms ease both;
+}
+
+.sky-panel.is-exploring .ufo-notice {
+  bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+/* The tic tac on an infrared targeting camera. */
+.flir {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 45%, #8e8e8e, #555 65%, #2f2f2f);
+  color: #f0f0f0;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: clamp(12px, 1.4vw, 16px);
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 2px #000;
+  animation: flir-fade 4800ms linear both;
+}
+
+.flir::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.12) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+
+@keyframes flir-fade {
+  0% {
+    opacity: 0;
+  }
+  5%,
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.flir-grain {
+  position: absolute;
+  inset: -64px;
+  opacity: 0.16;
+  will-change: transform;
+  animation: flir-grain 480ms steps(4) infinite;
+}
+
+@keyframes flir-grain {
+  to {
+    transform: translate(64px, 40px);
+  }
+}
+
+.flir-target,
+.flir-box,
+.flir-cross {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+}
+
+.flir-target {
+  will-change: transform;
+  animation: flir-target 4800ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* The glow sits on the still image inside, so moving it doesn't redraw the filter. */
+.flir-target .ufo-art {
+  filter: blur(0.6px) drop-shadow(0 0 12px rgb(0 0 0 / 0.85));
+}
+
+@keyframes flir-target {
+  0% {
+    transform: translate(-50%, -50%) translate(90px, -50px) rotate(-10deg) scale(1.7);
+  }
+  25% {
+    transform: translate(-50%, -50%) translate(6px, -3px) rotate(0deg) scale(1.7);
+  }
+  66% {
+    transform: translate(-50%, -50%) rotate(28deg) scale(1.7);
+  }
+  71% {
+    transform: translate(-50%, -50%) rotate(28deg) scale(1.7);
+  }
+  78%,
+  100% {
+    transform: translate(-50%, -50%) translate(-75vw, -8vh) rotate(28deg) scale(1.7);
+  }
+}
+
+/* The tracking box: brackets that close in, lock, and lose the track. */
+.flir-box {
+  width: 170px;
+  height: 100px;
+  will-change: transform, opacity;
+  background:
+    linear-gradient(#f0f0f0, #f0f0f0) 0 0 / 22px 2px,
+    linear-gradient(#f0f0f0, #f0f0f0) 0 0 / 2px 22px,
+    linear-gradient(#f0f0f0, #f0f0f0) 100% 0 / 22px 2px,
+    linear-gradient(#f0f0f0, #f0f0f0) 100% 0 / 2px 22px,
+    linear-gradient(#f0f0f0, #f0f0f0) 0 100% / 22px 2px,
+    linear-gradient(#f0f0f0, #f0f0f0) 0 100% / 2px 22px,
+    linear-gradient(#f0f0f0, #f0f0f0) 100% 100% / 22px 2px,
+    linear-gradient(#f0f0f0, #f0f0f0) 100% 100% / 2px 22px;
+  background-repeat: no-repeat;
+  animation: flir-box 4800ms ease both;
+}
+
+@keyframes flir-box {
+  0% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) translate(90px, -50px) scale(1.9);
+  }
+  25%,
+  71% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  80% {
+    opacity: 0.35;
+    transform: translate(-50%, -50%) scale(1.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.4);
+  }
+}
+
+.flir-cross {
+  width: 44px;
+  height: 44px;
+  background:
+    linear-gradient(#f0f0f0, #f0f0f0) 50% 0 / 2px 14px,
+    linear-gradient(#f0f0f0, #f0f0f0) 50% 100% / 2px 14px,
+    linear-gradient(#f0f0f0, #f0f0f0) 0 50% / 14px 2px,
+    linear-gradient(#f0f0f0, #f0f0f0) 100% 50% / 14px 2px;
+  background-repeat: no-repeat;
+  transform: translate(-50%, -50%);
+  opacity: 0.8;
+}
+
+.flir-readouts p {
+  position: absolute;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.flir-tl {
+  top: 6%;
+  left: 5%;
+}
+
+.flir-tr {
+  top: 6%;
+  right: 5%;
+  text-align: right;
+}
+
+.flir-bl {
+  bottom: 7%;
+  left: 5%;
+}
+
+.flir-status {
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3em;
+  letter-spacing: 0.3em;
+}
+
+.flir-lock,
+.flir-lost {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.flir-lock {
+  animation: flir-lock 4800ms steps(1) both;
+}
+
+.flir-lost {
+  animation: flir-lost 4800ms steps(1) both;
+}
+
+@keyframes flir-lock {
+  0%,
+  24% {
+    opacity: 0;
+  }
+  26%,
+  30%,
+  34%,
+  38% {
+    opacity: 1;
+  }
+  28%,
+  32%,
+  36% {
+    opacity: 0;
+  }
+  40%,
+  73% {
+    opacity: 1;
+  }
+  75%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes flir-lost {
+  0%,
+  79% {
+    opacity: 0;
+  }
+  80%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.flir-track {
+  animation: flir-track 4800ms steps(1) both;
+}
+
+@keyframes flir-track {
+  0%,
+  79% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The saucer's encore: an agent wipes your memory with a red beam and a white flash. */
+.memory-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow: hidden;
+  /* See-through, so the flash fades straight back to the real sky. */
+  pointer-events: none;
+}
+
+/* Keeps the picture's shape while covering the screen, so the lens glow lines up. */
+.memory-wipe-scene {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100vw, calc(100vh * 1672 / 941));
+  aspect-ratio: 1672 / 941;
+  will-change: transform, opacity;
+  animation: memory-wipe-scene 2600ms ease-out both;
+}
+
+.memory-wipe-scene img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+/* Tall screens show only a slice of the wide picture: shift it so the slice
+   holds the gadget and the agent's face (about 40% across), not just the face. */
+@media (max-aspect-ratio: 1 / 1) {
+  .memory-wipe-scene {
+    left: calc(50% + 0.1 * max(100vw, calc(100vh * 1672 / 941)));
+  }
+}
+
+@keyframes memory-wipe-scene {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  54% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.03);
+  }
+  58%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.03);
+  }
+}
+
+.memory-wipe-lens {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* The lens charging: a red glow that pulses and grows. */
+.memory-wipe-charge {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  margin: -90px 0 0 -90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0, #ff4d4d 18%, rgb(255 40 40 / 0.45) 40%, transparent 70%);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: memory-wipe-charge 2600ms ease-in both;
+}
+
+@keyframes memory-wipe-charge {
+  0%,
+  16% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  26% {
+    opacity: 0.9;
+    transform: scale(0.6);
+  }
+  32% {
+    opacity: 0.6;
+    transform: scale(0.5);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(0.9);
+  }
+  46% {
+    opacity: 0.75;
+    transform: scale(0.8);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(4);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(4);
+  }
+}
+
+/* The beam: a red streak of light flaring out from the lens toward you. */
+.memory-wipe-beam {
+  position: absolute;
+  width: 150vw;
+  height: 6px;
+  margin: -3px 0 0 -75vw;
+  border-radius: 50%;
+  background: linear-gradient(90deg, transparent, rgb(255 60 60 / 0.85) 40%, #fff 50%, rgb(255 60 60 / 0.85) 60%, transparent);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: memory-wipe-beam 2600ms ease-in both;
+}
+
+@keyframes memory-wipe-beam {
+  0%,
+  36% {
+    opacity: 0;
+    transform: scaleX(0.05) scaleY(0.5);
+  }
+  48% {
+    opacity: 1;
+    transform: scaleX(1) scaleY(1);
+  }
+  55%,
+  100% {
+    opacity: 1;
+    transform: scaleX(1) scaleY(5);
+  }
+}
+
+/* One quick white flash, then it fades back to the sky. */
+.memory-wipe-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  animation: memory-wipe-flash 2600ms ease-out both;
+}
+
+@keyframes memory-wipe-flash {
+  0%,
+  52% {
+    opacity: 0;
+  }
+  56%,
+  64% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* No hard flash for people who limit motion: a soft fade to white instead. */
+@media (prefers-reduced-motion: reduce) {
+  .memory-wipe-flash {
+    animation: memory-wipe-soft 2600ms ease both;
+  }
+
+  @keyframes memory-wipe-soft {
+    0%,
+    40% {
+      opacity: 0;
+    }
+    70% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
+
+/* The freighter's jump to lightspeed, from the cockpit. */
+.hyperspace {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow: hidden;
+  background: #000;
+  animation: hyperspace-fade 3600ms linear both;
+}
+
+@keyframes hyperspace-fade {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hyperspace-stars,
+.hyperspace-cockpit,
+.hyperspace-flash,
+.hyperspace-glow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Slightly oversized, so the edges never show while it shakes. */
+.hyperspace-cockpit {
+  object-fit: cover;
+  user-select: none;
+  will-change: transform;
+  animation: hyperspace-shake 3600ms linear both;
+}
+
+@keyframes hyperspace-shake {
+  0%,
+  38% {
+    transform: scale(1.04);
+  }
+  40% {
+    transform: scale(1.04) translate(-6px, 4px);
+  }
+  42% {
+    transform: scale(1.05) translate(7px, -5px);
+  }
+  44% {
+    transform: scale(1.045) translate(-5px, 3px);
+  }
+  46% {
+    transform: scale(1.04) translate(3px, -2px);
+  }
+  48%,
+  79% {
+    transform: scale(1.04) translate(0, 0);
+  }
+  81% {
+    transform: scale(1.04) translate(4px, 3px);
+  }
+  83% {
+    transform: scale(1.04) translate(-3px, -2px);
+  }
+  85%,
+  100% {
+    transform: scale(1.04);
+  }
+}
+
+/* The tunnel's violet light spilling onto the cockpit frame. */
+.hyperspace-glow {
+  background: radial-gradient(ellipse 70% 60% at 50% 43%, transparent 45%, rgb(122 79 208 / 0.55));
+  opacity: 0;
+  pointer-events: none;
+  animation: hyperspace-glow 3600ms ease both;
+}
+
+@keyframes hyperspace-glow {
+  0%,
+  38% {
+    opacity: 0;
+  }
+  44%,
+  76% {
+    opacity: 1;
+  }
+  86%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.hyperspace-flash {
+  background: radial-gradient(circle at 50% 45%, #fff, rgb(184 164 255 / 0.85) 40%, rgb(122 79 208 / 0.4));
+  opacity: 0;
+  pointer-events: none;
+  animation: hyperspace-flash 3600ms ease-out both;
+}
+
+@keyframes hyperspace-flash {
+  0%,
+  40% {
+    opacity: 0;
+  }
+  42% {
+    opacity: 1;
+  }
+  50%,
+  79% {
+    opacity: 0;
+  }
+  81% {
+    opacity: 0.6;
+  }
+  88%,
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Dome intro -------------------------------------------------------------------- */
 
 .dome-intro {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: #03132f;
+  background: #190134;
   color: #f4f1e8;
 }
 
@@ -2463,7 +3618,7 @@ a.deck-title:hover {
 .dome-sky {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 0%, #142a5c, #050b1d 70%);
+  background: radial-gradient(ellipse at 50% 0%, #33166b, #10031f 70%);
   --star: #f4f1e8;
   --streak: #fff6d8;
 }
@@ -2489,6 +3644,11 @@ a.deck-title:hover {
 
 .dome-intro:not(.is-closed) .dome-shutter img {
   transform: translateY(-101%);
+}
+
+/* Skipping straight to the sky from a closed dome: the shutter keeps pace with the tilt. */
+.dome-intro.is-launching .dome-shutter img {
+  transition-duration: 800ms;
 }
 
 .dome-art {
@@ -2518,13 +3678,13 @@ a.deck-title:hover {
   padding: 8px 12px;
   border: 0;
   border-radius: var(--radius-sm);
-  background: rgb(3 19 47 / 0.55);
-  color: #e8ecf5;
+  background: rgb(25 1 52 / 0.55);
+  color: #f3eaf8;
   font-weight: 600;
 }
 
 .intro-skip:hover {
-  background: rgb(3 19 47 / 0.85);
+  background: rgb(25 1 52 / 0.85);
 }
 
 .dome-panel {
@@ -2552,7 +3712,7 @@ a.deck-title:hover {
   padding: 22px 24px 24px;
   border: 1px solid rgb(212 175 95 / 0.35);
   border-radius: 16px;
-  background: rgb(3 19 47 / 0.78);
+  background: rgb(25 1 52 / 0.78);
   backdrop-filter: blur(6px);
   text-align: center;
 }
@@ -2591,7 +3751,7 @@ a.deck-title:hover {
 
 .dome-hint {
   margin: 0;
-  color: #9aa6c2;
+  color: #b9a6cf;
   font-size: 13px;
 }
 
@@ -2619,16 +3779,24 @@ a.deck-title:hover {
   max-width: calc(100vw - 32px);
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgb(3 19 47 / 0.75);
+  background: rgb(25 1 52 / 0.75);
   transform: translateX(-50%);
-  color: #c9d1e0;
+  color: #dccfe8;
   font-size: 14px;
-  cursor: pointer;
+  cursor: var(--cursor-telescope);
 }
 
 /* Responsive -------------------------------------------------------------------- */
 
 @media (max-width: 1100px) {
+  .header-moon-text {
+    display: none;
+  }
+
+  .header-moon-card-line {
+    display: block;
+  }
+
   .editor-body {
     grid-template-columns: 176px minmax(0, 1fr) 240px;
   }
@@ -2679,7 +3847,7 @@ a.deck-title:hover {
   }
 
   .header-logo .wordmark,
-  .theme-picker,
+  .editor-logo .wordmark,
   .hide-small,
   .save-status {
     display: none;
@@ -2726,6 +3894,13 @@ a.deck-title:hover {
   .sky-content,
   .dome-choices {
     transition-duration: 1ms;
+  }
+
+  .star-book-overlay,
+  .star-book-caption,
+  .star-book,
+  .star-book-page {
+    animation: none;
   }
 
   .show-layer.is-entering,

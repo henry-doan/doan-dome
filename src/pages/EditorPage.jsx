@@ -5,6 +5,7 @@ import Logo from '../components/Logo.jsx'
 import Menu from '../components/Menu.jsx'
 import { useLibrary } from '../hooks/useLibrary.js'
 import { downloadDeckFile } from '../lib/deckFile.js'
+import { exportDeck } from '../lib/exportActions.js'
 import { markOpened, renameDeck, toggleStar } from '../lib/deckStore.js'
 import { LAYOUTS, SLIDE_SIZES } from '../lib/layouts.js'
 import { makeId } from '../lib/random.js'
@@ -205,7 +206,7 @@ const Editor = ({ deck }) => {
           <Icon name="arrowLeft" />
         </a>
         <a className="editor-logo" href="#/home" aria-label="Doan Dome home" onClick={flush}>
-          <Logo variant="icon" size={40} />
+          <Logo variant="compact" size={36} />
         </a>
         <div className="editor-title">
           <label className="visually-hidden" htmlFor="deck-title">Presentation title</label>
@@ -238,8 +239,10 @@ const Editor = ({ deck }) => {
             triggerClassName="header-icon-button"
             trigger={<Icon name="download" />}
             items={[
+              { label: 'Download PowerPoint (.pptx)', icon: <Icon name="slides" size={18} />, onSelect: () => exportDeck({ ...doc, title }, 'pptx') },
+              { label: 'Download PDF', icon: <Icon name="file" size={18} />, onSelect: () => exportDeck({ ...doc, title }, 'pdf') },
+              { type: 'divider', key: 'd1' },
               { label: 'Save a copy (.dome)', icon: <Icon name="download" size={18} />, onSelect: () => downloadDeckFile({ ...doc, title }) },
-              { type: 'custom', key: 'soon', content: <p className="menu-note">PowerPoint (.pptx) and PDF are coming in a later version.</p> },
             ]}
           />
           <div className="present-split">

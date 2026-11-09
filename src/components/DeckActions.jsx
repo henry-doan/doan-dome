@@ -12,6 +12,7 @@ import {
   trashDeck,
 } from '../lib/deckStore.js'
 import { FOLDERS } from '../lib/folders.js'
+import { exportDeck } from '../lib/exportActions.js'
 import { navigate } from '../lib/router.js'
 import { showToast } from '../lib/toastStore.js'
 
@@ -96,6 +97,9 @@ const DeckActions = ({ deck }) => {
           },
         },
         { label: deck.starred ? 'Remove star' : 'Add star', icon: <Icon name="star" size={18} />, onSelect: () => toggleStar(deck.id) },
+        { type: 'divider', key: 'export' },
+        { label: 'Download PowerPoint', icon: <Icon name="slides" size={18} />, onSelect: () => exportDeck(deck, 'pptx') },
+        { label: 'Download PDF', icon: <Icon name="file" size={18} />, onSelect: () => exportDeck(deck, 'pdf') },
         { type: 'divider', key: 'divider' },
         { label: 'Move to Trash', icon: <Icon name="trash" size={18} />, danger: true, onSelect: trash },
       ]
