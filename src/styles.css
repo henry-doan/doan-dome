@@ -3315,14 +3315,6 @@ a.deck-title:hover {
   user-select: none;
 }
 
-/* Tall screens show only a slice of the wide picture: shift it so the slice
-   holds the gadget and the agent's face (about 40% across), not just the face. */
-@media (max-aspect-ratio: 1 / 1) {
-  .memory-wipe-scene {
-    left: calc(50% + 0.1 * max(100vw, calc(100vh * 1672 / 941)));
-  }
-}
-
 @keyframes memory-wipe-scene {
   0% {
     opacity: 0;
