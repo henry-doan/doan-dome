@@ -103,7 +103,7 @@ const ProfileMenu = () => {
                       <Icon name="sparkle" size={14} />
                       UFO sightings: {sightings.total}
                       <span className="menu-sightings-kinds">
-                        {sightings.kinds} of {UFO_KINDS.length} kinds
+                        {sightings.kinds === UFO_KINDS.length ? 'All kinds found · Area 51 theme unlocked' : `${sightings.kinds} of ${UFO_KINDS.length} kinds`}
                       </span>
                     </p>
                   ),

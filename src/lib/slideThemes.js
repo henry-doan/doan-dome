@@ -8,12 +8,14 @@ export const FONTS = {
   display: "'Cinzel', 'Trajan Pro', 'Times New Roman', serif",
   serif: "'EB Garamond', Garamond, 'Times New Roman', serif",
   sans: "'Source Sans 3', 'Segoe UI', system-ui, sans-serif",
+  mono: "'Courier Prime', 'Courier New', Courier, monospace",
 }
 
 export const FONT_OPTIONS = [
   { id: 'sans', label: 'Sans' },
   { id: 'serif', label: 'Serif' },
   { id: 'display', label: 'Display' },
+  { id: 'mono', label: 'Typewriter' },
 ]
 
 export const SLIDE_THEMES = [
@@ -87,7 +89,23 @@ export const SLIDE_THEMES = [
     body: { font: 'sans', color: '#4a3a33' },
     accents: ['#e0703a', '#f2b48a', '#7a4b8c', '#3a8c7a'],
   },
+  // The reward for catching every kind of UFO. `secret` keeps it out of the
+  // theme picker until then, but any presentation using it still shows it.
+  {
+    id: 'area51',
+    name: 'Area 51',
+    group: 'Classified',
+    secret: true,
+    background: '#020a05',
+    decoration: 'area51',
+    title: { font: 'mono', color: '#5dff8a' },
+    body: { font: 'mono', color: '#b9f5c9' },
+    accents: ['#2fd165', '#d93a3a', '#0f3d1f', '#e9e6d8'],
+  },
 ]
+
+/** The themes on offer in the picker: the secret ones only once unlocked. */
+export const availableThemes = (unlocked) => SLIDE_THEMES.filter((theme) => !theme.secret || unlocked)
 
 export const getSlideTheme = (id) => SLIDE_THEMES.find((theme) => theme.id === id) ?? SLIDE_THEMES[0]
 

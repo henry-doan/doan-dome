@@ -1,9 +1,10 @@
-import { useId } from 'react'
+import { useId, useSyncExternalStore } from 'react'
 import Icon from '../components/Icon.jsx'
 import SlideView from '../components/SlideView.jsx'
 import { setAspect } from './ops.js'
 import { SHAPES } from '../lib/shapes.js'
-import { FONT_OPTIONS, getSlideTheme, resolveTextStyle, shapeColors, SLIDE_THEMES } from '../lib/slideThemes.js'
+import { availableThemes, FONT_OPTIONS, getSlideTheme, resolveTextStyle, shapeColors } from '../lib/slideThemes.js'
+import { getSightings, subscribeToSightings, UFO_KINDS } from '../lib/ufoStore.js'
 
 const Section = ({ title, children }) => (
   <section className="inspector-section">
@@ -78,6 +79,9 @@ const toHex = (color) => (/^#[0-9a-f]{6}$/i.test(color ?? '') ? color : null)
 /** Settings for the current selection, or for the slide when nothing is selected. */
 const Inspector = ({ doc, slide, selected, onElements, onSlide, onDoc, onArrange, onDuplicate, onDelete }) => {
   const theme = getSlideTheme(doc.theme)
+  // Area 51 joins the picker once every kind of UFO has been caught, or when this presentation already uses it.
+  const sightings = useSyncExternalStore(subscribeToSightings, getSightings)
+  const themes = availableThemes(sightings.kinds >= UFO_KINDS.length || theme.secret)
   const single = selected.length === 1 ? selected[0] : null
   const ids = selected.map((element) => element.id)
 
@@ -86,11 +90,11 @@ const Inspector = ({ doc, slide, selected, onElements, onSlide, onDoc, onArrange
       <aside className="inspector" aria-label="Slide settings">
         <Section title="Presentation theme">
           <div className="theme-grid">
-            {SLIDE_THEMES.map((option) => (
+            {themes.map((option) => (
               <button
                 key={option.id}
                 type="button"
-                className={`theme-card ${doc.theme === option.id ? 'is-active' : ''}`}
+                className={`theme-card ${doc.theme === option.id ? 'is-active' : ''} ${option.secret ? 'is-secret' : ''}`}
                 aria-pressed={doc.theme === option.id}
                 onClick={() => onDoc((current) => ({ ...current, theme: option.id }))}
               >

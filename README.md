@@ -51,13 +51,14 @@ Part of the Doan suite, alongside Doan Excelsior (spreadsheets) and Doan Docs (d
 | Graphite | Dark grey, for everyday work |
 | Harbor | Pale blue with a navy edge band |
 | Sunrise | Warm cream with an orange edge band |
+| Area 51 | *Secret.* Green-on-black radar grid, TOP SECRET banners, a red CLASSIFIED stamp, redacted file line and a radar scope whose sweep turns while presenting. Typewriter font. Unlocked by catching every kind of UFO |
 
 Text and shapes that don’t set their own color or font follow the theme, so switching theme restyles the whole presentation. Each slide can also have its own background color.
 
 **Presenting**
 - **Present** goes full screen from the first slide; the arrow beside it starts from the current slide.
 - The first slide opens like the dome’s shutter, from a slit of light; later slides crossfade.
-- Next: → Space Enter Page Down or click. Back: ← Backspace Page Up. Home and End. Type a number and Enter to jump. B for a black screen. T for the telescope spotlight: the room goes dark except a gold eyepiece that follows the pointer (scroll or [ ] to resize). Esc ends the show.
+- Next: → Space Enter Page Down or click. Back: ← Backspace Page Up. Home and End. Type a number and Enter to jump. B for a black screen. W to make a wish: a shooting star streaks across the slide and bursts into a sparkle, for celebrating a big number (press it again for more). T for the telescope spotlight: the room goes dark except a gold eyepiece that follows the pointer (scroll or [ ] to resize). Esc ends the show.
 - A small control bar appears when you move the mouse and hides when you stop.
 
 **The real night sky**
@@ -72,11 +73,11 @@ Now and then a UFO crosses the Sky view or the night sky explore view. There are
 - **Tic tac**: it hangs still and jumps around, and dodges the pointer. Catch it and an infrared targeting camera locks on before it speeds away.
 - **Space freighter**: a jump to lightspeed from its cockpit. While exploring, you drop out somewhere else in the sky.
 
-The account menu can replay each one (**UFO abduction**, **Tic tac sighting**, **Jump to lightspeed**), switching to the Sky view if needed. Every UFO caught in the wild counts toward the sightings log in the menu, repeats included, along with how many of the 3 kinds you've found; menu replays don't count. UFOs don't appear with reduced motion turned on. While developing, `ufo('saucer')`, `ufo('tictac')` or `ufo('freighter')` in the browser console summons one.
+The account menu can replay each one (**UFO abduction**, **Tic tac sighting**, **Jump to lightspeed**), switching to the Sky view if needed. Every UFO caught in the wild counts toward the sightings log in the menu, repeats included, along with how many of the 3 kinds you've found; menu replays don't count. Catching the last kind you're missing unlocks the secret **Area 51** slide theme, which then appears in every editor's theme picker (presentations already using it always show it). UFOs don't appear with reduced motion turned on. While developing, `ufo('saucer')`, `ufo('tictac')` or `ufo('freighter')` in the browser console summons one.
 
 **App look**
 
-The whole app uses one look, **Nebula**: deep violet with the logo’s gold. The header shows tonight’s real moon phase with a line about the night. The logo and dome artwork were recolored from navy to violet so they match.
+The whole app uses one look, **Nebula**: deep violet with the logo’s gold. The header shows tonight’s real moon phase with a line about the night. Click it and the moon zooms up to fill the screen: how much is lit and how old it is, the next full moon with its folk name (Beaver Moon, Harvest Moon, Blue Moon and so on) and the next new moon, plus every full moon of the year. Click any of them (or use ← →) to preview it, each drawn in its own color (an orange Harvest Moon, a rosy Strawberry Moon, an icy Cold Moon); tonight stays highlighted in gold, and **Back to tonight** returns to it. The logo and dome artwork were recolored from navy to violet so they match.
 
 **Files**
 

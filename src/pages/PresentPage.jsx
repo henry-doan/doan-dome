@@ -9,13 +9,30 @@ const IDLE_MS = 2500
 const LENS_MIN = 90
 const LENS_MAX = 420
 const LENS_START = 180
+const between = (min, max) => min + Math.random() * (max - min)
+
+/**
+ * A shooting star for a wish: it starts somewhere in the upper part of the
+ * screen and streaks down across the slide, left to right or right to left,
+ * then bursts into a sparkle.
+ */
+const makeWish = () => {
+  const fromLeft = Math.random() < 0.5
+  return {
+    id: `${Date.now()}-${Math.random()}`,
+    x: window.innerWidth * (fromLeft ? between(0.04, 0.35) : between(0.65, 0.96)),
+    y: window.innerHeight * between(0.06, 0.32),
+    angle: fromLeft ? between(14, 34) : 180 - between(14, 34),
+    travel: Math.min(window.innerWidth, window.innerHeight * 1.6) * between(0.45, 0.6),
+  }
+}
 
 /**
  * The show. The room "dims" and the first slide opens like the dome's
  * shutter; later slides crossfade. Keys: → Space Enter PageDown for next,
  * ← Backspace PageUp for back, Home/End, a number then Enter to jump,
  * B for a black screen, T for the telescope spotlight (scroll or [ ] to
- * resize it), Esc to stop.
+ * resize it), W to make a wish (a shooting star across the slide), Esc to stop.
  */
 const Show = ({ deck, startAt }) => {
   const [index, setIndex] = useState(Math.min(startAt, deck.slides.length - 1))
@@ -23,6 +40,7 @@ const Show = ({ deck, startAt }) => {
   const [isBlack, setIsBlack] = useState(false)
   const [isIdle, setIsIdle] = useState(false)
   const [isSpotlight, setIsSpotlight] = useState(false)
+  const [wishes, setWishes] = useState([])
   const lensRef = useRef(null)
   const lens = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2, size: LENS_START })
   const [width, setWidth] = useState(window.innerWidth)
@@ -67,6 +85,9 @@ const Show = ({ deck, startAt }) => {
     placeLens()
   }
 
+  // Several can be in the sky at once, for a really big number.
+  const wish = () => setWishes((current) => [...current.slice(-5), makeWish()])
+
   const onKey = useEffectEvent((event) => {
     const key = event.key
     if (/^\d$/.test(key)) {
@@ -90,6 +111,7 @@ const Show = ({ deck, startAt }) => {
     else if (key === 'End') goTo(deck.slides.length - 1)
     else if (key === 'b' || key === '.') setIsBlack((black) => !black)
     else if (key === 't' || key === 'l') setIsSpotlight((on) => !on)
+    else if (key === 'w' || key === 'W') wish()
     else if (isSpotlight && (key === '[' || key === ']')) resizeLens(key === ']' ? 30 : -30)
     else if (key === 'Escape') exit()
   })
@@ -161,6 +183,21 @@ const Show = ({ deck, startAt }) => {
         {isBlack && <div className="show-black" aria-label="Screen blanked" />}
       </div>
 
+      {wishes.map((item) => (
+        <div
+          key={item.id}
+          className="show-wish"
+          style={{ left: item.x, top: item.y, '--angle': `${item.angle}deg`, '--travel': `${item.travel}px` }}
+          aria-hidden="true"
+        >
+          <span className="show-wish-star" />
+          <span
+            className="show-wish-burst"
+            onAnimationEnd={() => setWishes((current) => current.filter((other) => other.id !== item.id))}
+          />
+        </div>
+      ))}
+
       {isSpotlight && !isBlack && (
         <div ref={lensRef} className="show-lens" aria-hidden="true">
           <span className="show-lens-ticks" />
@@ -185,6 +222,9 @@ const Show = ({ deck, startAt }) => {
           onClick={() => setIsSpotlight((on) => !on)}
         >
           <Icon name="spotlight" size={18} />
+        </button>
+        <button type="button" aria-label="Make a wish (W)" title="Make a wish (W)" onClick={wish}>
+          <Icon name="sparkle" size={18} />
         </button>
         <button type="button" aria-label="Black screen (B)" title="Black screen (B)" onClick={() => setIsBlack((black) => !black)}>
           <Icon name="moon" size={18} />

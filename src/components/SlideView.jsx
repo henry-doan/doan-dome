@@ -3,9 +3,111 @@ import { seededRandom } from '../lib/random.js'
 import { getShape } from '../lib/shapes.js'
 import { getSlideTheme, resolveTextStyle, shapeColors } from '../lib/slideThemes.js'
 
+const MONO = "'Courier Prime', 'Courier New', monospace"
+
+/**
+ * The Area 51 theme's artwork: a green radar grid, a classified banner top
+ * and bottom, a red stamp, a radar scope with a sweep (it turns while
+ * presenting) and a redacted file line.
+ */
+const Area51 = ({ seed, width, height }) => {
+  const grid = `g51-${seed}`
+  const sweep = `s51-${seed}`
+  const glow = `v51-${seed}`
+  const scope = { x: width - 230, y: height - 250, r: 150 }
+  const corner = 70
+  const brackets = [
+    [48, 48, 1, 1],
+    [width - 48, 48, -1, 1],
+    [48, height - 48, 1, -1],
+    [width - 48, height - 48, -1, -1],
+  ]
+  const random = seededRandom(seed)
+  const fileNo = Math.floor(random() * 9000) + 1000
+  // Black bars of random lengths, laid end to end after "SUBJECT:".
+  let barX = 450
+  const redactions = [180, 120, 230, 90].map((base) => {
+    const w = base * (0.7 + random() * 0.6)
+    const bar = { x: barX, w }
+    barX += w + 14
+    return bar
+  })
+
+  return (
+    <svg className="slide-decoration" viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+      <defs>
+        <pattern id={grid} width="80" height="80" patternUnits="userSpaceOnUse">
+          <path d="M80 0H0V80" fill="none" stroke="#2fd165" strokeWidth="1" opacity="0.16" />
+        </pattern>
+        <radialGradient id={glow} cx="0.5" cy="0.45" r="0.75">
+          <stop offset="0" stopColor="#0b2a15" />
+          <stop offset="1" stopColor="#020a05" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={sweep} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#5dff8a" stopOpacity="0" />
+          <stop offset="1" stopColor="#5dff8a" stopOpacity="0.45" />
+        </linearGradient>
+      </defs>
+      <rect width={width} height={height} fill={`url(#${glow})`} />
+      <rect width={width} height={height} fill={`url(#${grid})`} />
+
+      {/* Targeting brackets in the corners. */}
+      <g fill="none" stroke="#2fd165" strokeWidth="3" opacity="0.7">
+        {brackets.map(([x, y, dx, dy]) => (
+          <path key={`${x}-${y}`} d={`M${x} ${y + dy * corner}V${y}H${x + dx * corner}`} />
+        ))}
+      </g>
+
+      {/* Classification banners. */}
+      <g fontFamily={MONO} fontWeight="700" textAnchor="middle" letterSpacing="6">
+        <text x={width / 2} y="62" fontSize="26" fill="#5dff8a" opacity="0.85">TOP SECRET // MAJIC // EYES ONLY</text>
+        <text x={width / 2} y={height - 40} fontSize="22" fill="#5dff8a" opacity="0.6">DECLASSIFY ON: NEVER</text>
+      </g>
+
+      {/* The redacted file line, bottom left. */}
+      <g fontFamily={MONO} fontSize="22" fill="#b9f5c9" opacity="0.7">
+        <text x="110" y={height - 96}>FILE 51-{fileNo} · SUBJECT:</text>
+        {redactions.map(({ x, w }) => (
+          <rect key={x} x={x} y={height - 116} width={w} height="26" fill="#1d5c31" stroke="#2fd165" strokeWidth="1.5" strokeOpacity="0.6" />
+        ))}
+      </g>
+
+      {/* The radar scope, with a few blips. */}
+      <g transform={`translate(${scope.x} ${scope.y})`}>
+        <g fill="none" stroke="#2fd165" opacity="0.5">
+          <circle r={scope.r} strokeWidth="2.5" />
+          <circle r={scope.r * 0.66} strokeWidth="1.2" />
+          <circle r={scope.r * 0.33} strokeWidth="1.2" />
+          <path d={`M${-scope.r} 0H${scope.r}M0 ${-scope.r}V${scope.r}`} strokeWidth="1" />
+        </g>
+        <g className="area51-sweep">
+          <path d={`M0 0L${scope.r} 0A${scope.r} ${scope.r} 0 0 0 ${scope.r * Math.cos(-0.9)} ${scope.r * Math.sin(-0.9)}Z`} fill={`url(#${sweep})`} />
+          <path d={`M0 0H${scope.r}`} stroke="#5dff8a" strokeWidth="2.5" />
+        </g>
+        <g fill="#5dff8a">
+          <circle cx="-52" cy="-70" r="6" />
+          <circle cx="78" cy="38" r="4.5" opacity="0.7" />
+          <ellipse cx="-30" cy="88" rx="12" ry="5" />
+        </g>
+      </g>
+
+      {/* The stamp. */}
+      <g transform={`translate(${width - 300} 150) rotate(-12)`} fill="none" stroke="#d93a3a" opacity="0.8">
+        <rect x="-170" y="-48" width="340" height="96" strokeWidth="6" rx="6" />
+        <rect x="-158" y="-36" width="316" height="72" strokeWidth="2" rx="3" />
+        <text x="-136" y="16" textLength="272" lengthAdjust="spacingAndGlyphs" fontFamily={MONO} fontSize="44" fontWeight="700" fill="#d93a3a" stroke="none">
+          CLASSIFIED
+        </text>
+      </g>
+    </svg>
+  )
+}
+
 /** Theme artwork behind the content: stars, an atlas border, nebula clouds or a band. */
 const Decoration = ({ theme, seed, width, height }) => {
   if (!theme.decoration) return null
+
+  if (theme.decoration === 'area51') return <Area51 seed={seed} width={width} height={height} />
 
   if (theme.decoration === 'band') {
     return (

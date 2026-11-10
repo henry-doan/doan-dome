@@ -56,7 +56,9 @@ const flightPlan = (kind, area) => {
   }
 
   // The tic tac: hangs still, then jumps to a new spot almost instantly. It
-  // dodges the pointer some of the time, and finally shoots off screen.
+  // dodges the pointer some of the time, and finally shoots off screen. Each
+  // dodge tires it, so it dodges less often and a persistent pointer catches it.
+  // Dodges don't count toward the hops it makes before leaving.
   const randomSpot = () => [between(left + 60, right - 60), between(top + 30, bottom - 30)]
   let from = randomSpot()
   let to = from
@@ -64,12 +66,15 @@ const flightPlan = (kind, area) => {
   let holdUntil = between(1400, 2600)
   let hops = 0
   let lastDodge = -Infinity
+  let dodges = 0
+  let dodging = false
   const HOP_MS = 140
   return {
     appearsInPlace: true,
     step: (t) => {
       if (t >= holdUntil && t >= hopAt + HOP_MS) {
-        hops += 1
+        if (!dodging) hops += 1
+        dodging = false
         from = to
         to = hops > 7 ? [dir > 0 ? right + 200 : left - 200, between(top, bottom)] : randomSpot()
         hopAt = t
@@ -81,8 +86,13 @@ const flightPlan = (kind, area) => {
       return { x, y, rot: 0, flip: false, done: hops > 7 && progress >= 1 }
     },
     dodge: (t) => {
-      if (t - lastDodge < 500 || t < hopAt + HOP_MS || Math.random() > 0.6) return
+      // One roll per half second, not per pointer event, or it would always dodge.
+      // 60% the first time, then 36%, 22%, 13%...
+      if (hops > 7 || t - lastDodge < 500 || t < hopAt + HOP_MS) return
       lastDodge = t
+      if (Math.random() > 0.6 * 0.6 ** dodges) return
+      dodges += 1
+      dodging = true
       holdUntil = t
     },
   }
@@ -228,13 +238,17 @@ const UfoLayer = ({ mode, panelRef, chartRef }) => {
       requestAnimationFrame(step)
     })
 
-  const announce = (text) => {
+  const announce = (text, ms = 4200) => {
     setNotice({ id: Date.now(), text })
-    later(() => setNotice(null), 4200)
+    later(() => setNotice(null), ms)
   }
 
   // Replays from the menu aren't sightings, so they have no sightings line.
-  const sightingsLine = (log) => (log ? ` · UFO sightings: ${log.total} (${log.kinds} of ${UFO_KINDS.length} kinds)` : '')
+  const sightingsLine = (log) => {
+    if (!log) return ''
+    const line = ` · UFO sightings: ${log.total} (${log.kinds} of ${UFO_KINDS.length} kinds)`
+    return log.unlocked ? `${line}. Every kind found: the classified Area 51 slide theme is now in your themes.` : line
+  }
 
   /** The saucer beams up a constellation, studies it and drops it back. */
   const abduct = async (log) => {
@@ -263,7 +277,7 @@ const UfoLayer = ({ mode, panelRef, chartRef }) => {
     }
 
     if (!target) {
-      announce(`The saucer found nothing to study.${sightingsLine(log)}`)
+      announce(`The saucer found nothing to study.${sightingsLine(log)}`, log?.unlocked ? 8000 : 4200)
       await glide(position.current.x, area.top - 200, 1200)
       setUfo(null)
       return
@@ -310,7 +324,9 @@ const UfoLayer = ({ mode, panelRef, chartRef }) => {
     if (!ufo || caught.current) return
     caught.current = true
     // Only a UFO caught in the wild counts toward the sightings log.
-    const log = isReplay ? null : recordSighting(ufo.kind)
+    const recorded = isReplay ? null : recordSighting(ufo.kind)
+    // The first catch of the last kind still missing unlocks the Area 51 theme.
+    const log = recorded && { ...recorded, unlocked: recorded.kinds === UFO_KINDS.length && recorded.byKind[ufo.kind] === 1 }
     if (ufo.kind === 'saucer') {
       abduct(log)
     } else if (ufo.kind === 'tictac') {
@@ -335,14 +351,15 @@ const UfoLayer = ({ mode, panelRef, chartRef }) => {
     // never null and drop the optional checks in the render below.
     if (!scene) return
     const { kind, log } = scene
+    const ms = log?.unlocked ? 8000 : 4200
     setScene(null)
     if (kind === 'flir') {
-      announce(`Tic tac sighted, and gone.${sightingsLine(log)}`)
+      announce(`Tic tac sighted, and gone.${sightingsLine(log)}`, ms)
     } else if (kind === 'memory') {
-      announce(`Nothing to see here.${sightingsLine(log)}`)
+      announce(`Nothing to see here.${sightingsLine(log)}`, ms)
     } else {
       if (mode === 'explore') chartRef.current?.jumpTo(between(0, 360), between(-50, 70))
-      announce(`${mode === 'explore' ? 'Dropped out of lightspeed somewhere new.' : 'Back from lightspeed.'}${sightingsLine(log)}`)
+      announce(`${mode === 'explore' ? 'Dropped out of lightspeed somewhere new.' : 'Back from lightspeed.'}${sightingsLine(log)}`, ms)
     }
   }
 
